@@ -1,0 +1,4 @@
+- [ ] Start Android Emulator (`Medium_Phone_API_36.0`)
+- [ ] Start Expo Development Server (`npm run android`)
+- [ ] Verify App is running in Emulator
+- [ ] Verify QR code is visible for iPhone scanning
