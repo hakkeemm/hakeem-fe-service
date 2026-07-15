@@ -1,0 +1,52 @@
+{
+  "common": {
+    "appName": "Hakeem",
+    "loading": "Loading…",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "logout": "Log out",
+    "empty": "Nothing here yet",
+    "error": "Something went wrong",
+    "language": "Language",
+    "restartRequired": "Please restart the app to apply the language change.",
+    "restartNow": "Restart now"
+  },
+  "auth": {
+    "loginTitle": "Welcome to Hakeem",
+    "loginSubtitle": "Book medical appointments with ease",
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password",
+    "selectLanguage": "Choose your language",
+    "mockRole": "Demo role",
+    "rolePatient": "Patient",
+    "roleDoctor": "Doctor",
+    "roleAssistant": "Assistant",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least 6 characters"
+  },
+  "patient": {
+    "home": "Home",
+    "search": "Search",
+    "appointments": "My appointments",
+    "profile": "Profile"
+  },
+  "doctor": {
+    "home": "Home",
+    "schedule": "Schedule",
+    "timeline": "Timeline",
+    "feedback": "Feedback",
+    "profile": "Profile"
+  },
+  "assistant": {
+    "liveQueue": "Live queue",
+    "manualEntry": "Manual entry",
+    "history": "History"
+  }
+}

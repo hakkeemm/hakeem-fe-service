@@ -1,0 +1,52 @@
+{
+  "common": {
+    "appName": "حكيم",
+    "loading": "جاري التحميل…",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "logout": "تسجيل الخروج",
+    "empty": "لا يوجد شيء هنا بعد",
+    "error": "حدث خطأ ما",
+    "language": "اللغة",
+    "restartRequired": "يرجى إعادة تشغيل التطبيق لتطبيق تغيير اللغة.",
+    "restartNow": "إعادة التشغيل الآن"
+  },
+  "auth": {
+    "loginTitle": "مرحبًا بك في حكيم",
+    "loginSubtitle": "احجز مواعيدك الطبية بسهولة",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "selectLanguage": "اختر لغتك",
+    "mockRole": "دور تجريبي",
+    "rolePatient": "مريض",
+    "roleDoctor": "طبيب",
+    "roleAssistant": "مساعد",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "أدخل بريدًا إلكترونيًا صالحًا",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordMin": "يجب أن تكون كلمة المرور ٦ أحرف على الأقل"
+  },
+  "patient": {
+    "home": "الرئيسية",
+    "search": "بحث",
+    "appointments": "مواعيدي",
+    "profile": "الملف الشخصي"
+  },
+  "doctor": {
+    "home": "الرئيسية",
+    "schedule": "الجدول",
+    "timeline": "الجدول الزمني",
+    "feedback": "التقييمات",
+    "profile": "الملف الشخصي"
+  },
+  "assistant": {
+    "liveQueue": "قائمة الانتظار",
+    "manualEntry": "إدخال يدوي",
+    "history": "السجل"
+  }
+}
