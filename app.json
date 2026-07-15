@@ -38,13 +38,10 @@
         {
           "configureAndroidBackup": true
         }
-      ],
-      "react-native-localize"
+      ]
     ],
-    "extra": {
-      "eas": {
-        "projectId": "hakeem-local"
-      }
+    "updates": {
+      "enabled": false
     }
   }
 }

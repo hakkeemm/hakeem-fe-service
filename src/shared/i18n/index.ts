@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { getLocales } from 'expo-localization';
 import { I18nManager } from 'react-native';
-import * as RNLocalize from 'react-native-localize';
 
 import ar from './ar.json';
 import en from './en.json';
@@ -9,8 +9,7 @@ import en from './en.json';
 export type AppLanguage = 'ar' | 'en';
 
 export function getDeviceDefaultLanguage(): AppLanguage {
-  const locales = RNLocalize.getLocales();
-  const primary = locales[0]?.languageCode;
+  const primary = getLocales()[0]?.languageCode;
   if (primary === 'ar') {
     return 'ar';
   }

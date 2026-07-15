@@ -1,5 +1,12 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
@@ -52,8 +59,8 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48,
-    borderRadius: 12,
+    minHeight: 56,
+    borderRadius: 14,
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,9 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { z } from 'zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button } from '../../../shared/components/Button';
+import { FormField } from '../../../shared/components/FormField';
+import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
@@ -11,28 +24,123 @@ import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
+const resetSchema = z
+  .object({
+    password: z.string().min(1, 'auth.passwordRequired').min(6, 'auth.passwordMin'),
+    confirmPassword: z.string().min(1, 'auth.passwordRequired'),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: 'auth.passwordsMustMatch',
+    path: ['confirmPassword'],
+  });
+
+type ResetFormValues = z.infer<typeof resetSchema>;
+
 export function ResetPasswordScreen({ navigation }: Props) {
   const { t } = useTranslation();
+  const { isRTL } = useRTL();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetFormValues>({
+    resolver: zodResolver(resetSchema),
+    defaultValues: { password: '', confirmPassword: '' },
+  });
+
+  const textAlign = isRTL ? 'right' : 'left';
+
+  const onSubmit = handleSubmit(() => {
+    navigation.navigate('Login');
+  });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{t('auth.resetPassword')}</Text>
-      <Button label={t('auth.login')} onPress={() => navigation.navigate('Login')} />
-    </View>
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.card}>
+            <View style={styles.header}>
+              <Text style={[styles.title, { textAlign }]}>{t('auth.resetPasswordTitle')}</Text>
+              <Text style={[styles.subtitle, { textAlign }]}>
+                {t('auth.resetPasswordSubtitle')}
+              </Text>
+            </View>
+
+            <FormField
+              control={control}
+              name="password"
+              placeholder={t('auth.newPassword')}
+              isPassword
+              errorMessage={
+                errors.password
+                  ? t(errors.password.message ?? 'auth.passwordRequired')
+                  : undefined
+              }
+            />
+
+            <FormField
+              control={control}
+              name="confirmPassword"
+              placeholder={t('auth.confirmPassword')}
+              isPassword
+              errorMessage={
+                errors.confirmPassword
+                  ? t(errors.confirmPassword.message ?? 'auth.passwordRequired')
+                  : undefined
+              }
+            />
+
+            <Button label={t('auth.resetPassword')} onPress={() => void onSubmit()} />
+            <Button
+              label={t('common.cancel')}
+              variant="ghost"
+              onPress={() => navigation.goBack()}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safe: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  flex: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     justifyContent: 'center',
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+  },
+  card: {
+    width: '100%',
     gap: spacing.md,
   },
+  header: {
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
   title: {
-    ...typography.title,
-    color: colors.text,
-    textAlign: 'center',
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    lineHeight: 22,
   },
 });

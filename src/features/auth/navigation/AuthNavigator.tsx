@@ -5,9 +5,11 @@ import { ForgotPasswordScreen } from '../screens/ForgotPasswordScreen';
 import { LanguageSelectScreen } from '../screens/LanguageSelectScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { ResetPasswordScreen } from '../screens/ResetPasswordScreen';
+import { SignUpScreen } from '../screens/SignUpScreen';
 
 export type AuthStackParamList = {
   Login: undefined;
+  SignUp: undefined;
   ForgotPassword: undefined;
   ResetPassword: undefined;
   LanguageSelect: undefined;
@@ -19,6 +21,7 @@ export function AuthNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <Stack.Screen name="LanguageSelect" component={LanguageSelectScreen} />

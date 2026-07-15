@@ -2,7 +2,6 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,33 +12,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button } from '../../../shared/components/Button';
-import { Checkbox } from '../../../shared/components/Checkbox';
 import { FormField } from '../../../shared/components/FormField';
-import { SocialButton } from '../../../shared/components/SocialButton';
-import { TextDivider } from '../../../shared/components/TextDivider';
 import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
-import { useLoginForm } from '../hooks/useLoginForm';
+import { useSignUpForm } from '../hooks/useSignUpForm';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 
-export function LoginScreen({ navigation }: Props) {
+export function SignUpScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
-  const {
-    control,
-    errors,
-    rememberMe,
-    toggleRememberMe,
-    submitError,
-    isSubmitting,
-    onSubmit,
-    onGooglePress,
-  } = useLoginForm();
-
+  const { control, errors, submitError, isSubmitting, onSubmit } = useSignUpForm();
   const textAlign = isRTL ? 'right' : 'left';
 
   return (
@@ -55,11 +41,24 @@ export function LoginScreen({ navigation }: Props) {
         >
           <View style={styles.card}>
             <View style={styles.header}>
-              <Text style={[styles.title, { textAlign }]}>{t('auth.loginTitle')}</Text>
-              <Text style={[styles.subtitle, { textAlign }]}>{t('auth.loginSubtitle')}</Text>
+              <Text style={[styles.title, { textAlign }]}>{t('auth.signUpTitle')}</Text>
+              <Text style={[styles.subtitle, { textAlign }]}>{t('auth.signUpSubtitle')}</Text>
             </View>
 
             <View style={styles.form}>
+              <FormField
+                control={control}
+                name="fullName"
+                placeholder={t('auth.fullName')}
+                autoCapitalize="words"
+                autoCorrect={false}
+                errorMessage={
+                  errors.fullName
+                    ? t(errors.fullName.message ?? 'auth.fullNameRequired')
+                    : undefined
+                }
+              />
+
               <FormField
                 control={control}
                 name="email"
@@ -69,6 +68,19 @@ export function LoginScreen({ navigation }: Props) {
                 autoCorrect={false}
                 errorMessage={
                   errors.email ? t(errors.email.message ?? 'auth.emailInvalid') : undefined
+                }
+              />
+
+              <FormField
+                control={control}
+                name="phoneNumber"
+                placeholder={t('auth.phoneNumber')}
+                keyboardType="phone-pad"
+                autoCorrect={false}
+                errorMessage={
+                  errors.phoneNumber
+                    ? t(errors.phoneNumber.message ?? 'auth.phoneInvalid')
+                    : undefined
                 }
               />
 
@@ -84,56 +96,33 @@ export function LoginScreen({ navigation }: Props) {
                 }
               />
 
-              <View style={[styles.optionsRow, isRTL && styles.optionsRowRtl]}>
-                <Checkbox
-                  label={t('auth.rememberMe')}
-                  checked={rememberMe}
-                  onToggle={toggleRememberMe}
-                />
-                <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-                  <Text style={styles.forgot}>{t('auth.forgotPassword')}</Text>
-                </Pressable>
-              </View>
+              <FormField
+                control={control}
+                name="confirmPassword"
+                placeholder={t('auth.confirmPassword')}
+                isPassword
+                errorMessage={
+                  errors.confirmPassword
+                    ? t(errors.confirmPassword.message ?? 'auth.passwordRequired')
+                    : undefined
+                }
+              />
 
               {submitError ? <Text style={styles.submitError}>{submitError}</Text> : null}
 
               <Button
-                label={t('auth.login')}
+                label={t('auth.signUp')}
                 onPress={() => void onSubmit()}
                 loading={isSubmitting}
               />
             </View>
 
-            <View style={styles.socialSection}>
-              <TextDivider label={t('auth.orSignInWith')} />
-              <SocialButton
-                provider="google"
-                label={t('auth.continueWithGoogle')}
-                onPress={onGooglePress}
-              />
-            </View>
-
-            <View style={styles.footer}>
-              <Text style={styles.legal}>
-                {t('auth.termsPrefix')}{' '}
-                <Text style={styles.legalLink}>{t('auth.terms')}</Text> {t('auth.and')}{' '}
-                <Text style={styles.legalLink}>{t('auth.privacy')}</Text>.
+            <Text style={styles.footerRow}>
+              {t('auth.alreadyHaveAccount')}{' '}
+              <Text style={styles.footerLink} onPress={() => navigation.navigate('Login')}>
+                {t('auth.login')}
               </Text>
-
-              <Text style={styles.signUpRow}>
-                {t('auth.noAccountYet')}{' '}
-                <Text style={styles.signUpLink} onPress={() => navigation.navigate('SignUp')}>
-                  {t('auth.signUp')}
-                </Text>
-              </Text>
-
-              <Pressable
-                onPress={() => navigation.navigate('LanguageSelect')}
-                style={styles.langLink}
-              >
-                <Text style={styles.langText}>{t('common.language')}</Text>
-              </Pressable>
-            </View>
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -176,58 +165,18 @@ const styles = StyleSheet.create({
   form: {
     gap: spacing.md,
   },
-  optionsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  optionsRowRtl: {
-    flexDirection: 'row-reverse',
-  },
-  forgot: {
-    ...typography.bodySmall,
-    color: colors.primary,
-    fontWeight: '600',
-  },
   submitError: {
     ...typography.caption,
     color: colors.error,
     textAlign: 'center',
   },
-  socialSection: {
-    width: '100%',
-    alignItems: 'stretch',
-    gap: spacing.lg,
-  },
-  footer: {
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  legal: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 18,
-    paddingHorizontal: spacing.sm,
-  },
-  legalLink: {
-    color: colors.text,
-    fontWeight: '700',
-  },
-  signUpRow: {
+  footerRow: {
     ...typography.bodySmall,
     color: colors.textSecondary,
     textAlign: 'center',
   },
-  signUpLink: {
+  footerLink: {
     color: colors.primary,
     fontWeight: '700',
-  },
-  langLink: {
-    paddingVertical: spacing.xs,
-  },
-  langText: {
-    ...typography.caption,
-    color: colors.textSecondary,
   },
 });

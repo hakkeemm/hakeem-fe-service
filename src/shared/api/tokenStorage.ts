@@ -1,14 +1,31 @@
-import * as Keychain from 'react-native-keychain';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
 const ACCESS_TOKEN_KEY = 'hakeem_access_token';
 const REFRESH_TOKEN_KEY = 'hakeem_refresh_token';
 const KEYCHAIN_SERVICE = 'com.hakeem.app.tokens';
 
-let useSecureStoreFallback = false;
+/** Expo Go cannot use react-native-keychain; use SecureStore there. */
+const isExpoGo = Constants.appOwnership === 'expo';
+
+type KeychainModule = typeof import('react-native-keychain');
+
+function loadKeychain(): KeychainModule | null {
+  if (isExpoGo) {
+    return null;
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require('react-native-keychain') as KeychainModule;
+  } catch {
+    return null;
+  }
+}
 
 async function setSecureItem(key: string, value: string): Promise<void> {
-  if (useSecureStoreFallback) {
+  const Keychain = loadKeychain();
+  if (!Keychain) {
     await SecureStore.setItemAsync(key, value);
     return;
   }
@@ -19,13 +36,13 @@ async function setSecureItem(key: string, value: string): Promise<void> {
       accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
     });
   } catch {
-    useSecureStoreFallback = true;
     await SecureStore.setItemAsync(key, value);
   }
 }
 
 async function getSecureItem(key: string): Promise<string | null> {
-  if (useSecureStoreFallback) {
+  const Keychain = loadKeychain();
+  if (!Keychain) {
     return SecureStore.getItemAsync(key);
   }
 
@@ -38,13 +55,13 @@ async function getSecureItem(key: string): Promise<string | null> {
     }
     return credentials.password;
   } catch {
-    useSecureStoreFallback = true;
     return SecureStore.getItemAsync(key);
   }
 }
 
 async function deleteSecureItem(key: string): Promise<void> {
-  if (useSecureStoreFallback) {
+  const Keychain = loadKeychain();
+  if (!Keychain) {
     await SecureStore.deleteItemAsync(key);
     return;
   }
@@ -54,7 +71,6 @@ async function deleteSecureItem(key: string): Promise<void> {
       service: `${KEYCHAIN_SERVICE}.${key}`,
     });
   } catch {
-    useSecureStoreFallback = true;
     await SecureStore.deleteItemAsync(key);
   }
 }

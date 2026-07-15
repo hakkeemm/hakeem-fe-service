@@ -28,6 +28,14 @@ export interface LoginRequest {
   role?: UserRole;
 }
 
+/** Matches backend RegisterRequestDto */
+export interface RegisterRequest {
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  password: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
