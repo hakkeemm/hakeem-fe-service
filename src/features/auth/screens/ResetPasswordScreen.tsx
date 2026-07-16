@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -20,18 +20,28 @@ import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
+import { passwordField } from '../hooks/authValidation';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
 const resetSchema = z
   .object({
-    password: z.string().min(1, 'auth.passwordRequired').min(6, 'auth.passwordMin'),
+    password: passwordField,
     confirmPassword: z.string().min(1, 'auth.passwordRequired'),
   })
-  .refine((values) => values.password === values.confirmPassword, {
-    message: 'auth.passwordsMustMatch',
-    path: ['confirmPassword'],
+  .superRefine((values, ctx) => {
+    if (values.confirmPassword.length === 0) {
+      return;
+    }
+
+    if (values.password !== values.confirmPassword) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'auth.passwordsMustMatch',
+        path: ['confirmPassword'],
+      });
+    }
   });
 
 type ResetFormValues = z.infer<typeof resetSchema>;
@@ -39,14 +49,32 @@ type ResetFormValues = z.infer<typeof resetSchema>;
 export function ResetPasswordScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
+  const form = useForm<ResetFormValues>({
+    resolver: zodResolver(resetSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: { password: '', confirmPassword: '' },
+  });
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ResetFormValues>({
-    resolver: zodResolver(resetSchema),
-    defaultValues: { password: '', confirmPassword: '' },
-  });
+  } = form;
+
+  useEffect(() => {
+    const subscription = form.watch((_value, info) => {
+      if (info.name !== 'password') {
+        return;
+      }
+
+      const confirmPassword = form.getValues('confirmPassword');
+      if (confirmPassword.length > 0) {
+        void form.trigger('confirmPassword');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const textAlign = isRTL ? 'right' : 'left';
 
@@ -77,10 +105,11 @@ export function ResetPasswordScreen({ navigation }: Props) {
               control={control}
               name="password"
               placeholder={t('auth.newPassword')}
+              leadingIcon="lock"
               isPassword
               errorMessage={
                 errors.password
-                  ? t(errors.password.message ?? 'auth.passwordRequired')
+                  ? t(errors.password.message ?? 'auth.passwordRegex')
                   : undefined
               }
             />
@@ -89,10 +118,11 @@ export function ResetPasswordScreen({ navigation }: Props) {
               control={control}
               name="confirmPassword"
               placeholder={t('auth.confirmPassword')}
+              leadingIcon="lock"
               isPassword
               errorMessage={
                 errors.confirmPassword
-                  ? t(errors.confirmPassword.message ?? 'auth.passwordRequired')
+                  ? t(errors.confirmPassword.message ?? 'auth.passwordsMustMatch')
                   : undefined
               }
             />

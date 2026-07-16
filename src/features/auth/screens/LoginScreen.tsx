@@ -13,7 +13,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Button } from '../../../shared/components/Button';
-import { Checkbox } from '../../../shared/components/Checkbox';
 import { FormField } from '../../../shared/components/FormField';
 import { SocialButton } from '../../../shared/components/SocialButton';
 import { TextDivider } from '../../../shared/components/TextDivider';
@@ -32,8 +31,6 @@ export function LoginScreen({ navigation }: Props) {
   const {
     control,
     errors,
-    rememberMe,
-    toggleRememberMe,
     submitError,
     isSubmitting,
     isGoogleSubmitting,
@@ -65,6 +62,7 @@ export function LoginScreen({ navigation }: Props) {
                 control={control}
                 name="email"
                 placeholder={t('auth.email')}
+                leadingIcon="email"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoCorrect={false}
@@ -77,6 +75,7 @@ export function LoginScreen({ navigation }: Props) {
                 control={control}
                 name="password"
                 placeholder={t('auth.password')}
+                leadingIcon="lock"
                 isPassword
                 errorMessage={
                   errors.password
@@ -86,11 +85,6 @@ export function LoginScreen({ navigation }: Props) {
               />
 
               <View style={[styles.optionsRow, isRTL && styles.optionsRowRtl]}>
-                <Checkbox
-                  label={t('auth.rememberMe')}
-                  checked={rememberMe}
-                  onToggle={toggleRememberMe}
-                />
                 <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
                   <Text style={styles.forgot}>{t('auth.forgotPassword')}</Text>
                 </Pressable>
@@ -182,10 +176,11 @@ const styles = StyleSheet.create({
   optionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   optionsRowRtl: {
     flexDirection: 'row-reverse',
+    justifyContent: 'flex-start',
   },
   forgot: {
     ...typography.bodySmall,

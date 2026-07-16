@@ -20,12 +20,13 @@ import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
+import { emailField } from '../hooks/authValidation';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
 const forgotSchema = z.object({
-  email: z.string().min(1, 'auth.emailRequired').email('auth.emailInvalid'),
+  email: emailField,
 });
 
 type ForgotFormValues = z.infer<typeof forgotSchema>;
@@ -39,6 +40,8 @@ export function ForgotPasswordScreen({ navigation }: Props) {
     formState: { errors },
   } = useForm<ForgotFormValues>({
     resolver: zodResolver(forgotSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: { email: '' },
   });
 
@@ -71,6 +74,7 @@ export function ForgotPasswordScreen({ navigation }: Props) {
               control={control}
               name="email"
               placeholder={t('auth.email')}
+              leadingIcon="email"
               autoCapitalize="none"
               keyboardType="email-address"
               autoCorrect={false}

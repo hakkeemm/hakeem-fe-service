@@ -16,11 +16,12 @@ export function useLoginForm(
   const { t } = useTranslation();
   const login = useLogin();
   const googleSignIn = useGoogleSignIn();
-  const [rememberMe, setRememberMe] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -49,15 +50,9 @@ export function useLoginForm(
     await googleSignIn.signInWithGoogle();
   };
 
-  const toggleRememberMe = () => {
-    setRememberMe((prev) => !prev);
-  };
-
   return {
     control: form.control,
     errors: form.formState.errors,
-    rememberMe,
-    toggleRememberMe,
     submitError: submitError ?? googleSignIn.error,
     isSubmitting: login.isPending,
     isGoogleSubmitting: googleSignIn.isPending,

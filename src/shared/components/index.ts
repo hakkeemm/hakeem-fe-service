@@ -8,5 +8,6 @@ export { FormField } from './FormField';
 export { Input } from './Input';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Modal } from './Modal';
+export { OtpInput } from './OtpInput';
 export { SocialButton } from './SocialButton';
 export { TextDivider } from './TextDivider';

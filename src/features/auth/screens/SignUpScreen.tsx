@@ -50,8 +50,12 @@ export function SignUpScreen({ navigation }: Props) {
                 control={control}
                 name="fullName"
                 placeholder={t('auth.fullName')}
-                autoCapitalize="words"
+                leadingIcon="user"
+                writingDirection="auto"
+                autoCapitalize="none"
                 autoCorrect={false}
+                autoComplete="name"
+                textContentType="name"
                 errorMessage={
                   errors.fullName
                     ? t(errors.fullName.message ?? 'auth.fullNameRequired')
@@ -63,6 +67,7 @@ export function SignUpScreen({ navigation }: Props) {
                 control={control}
                 name="email"
                 placeholder={t('auth.email')}
+                leadingIcon="email"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoCorrect={false}
@@ -75,6 +80,7 @@ export function SignUpScreen({ navigation }: Props) {
                 control={control}
                 name="phoneNumber"
                 placeholder={t('auth.phoneNumber')}
+                leadingIcon="phone"
                 keyboardType="phone-pad"
                 autoCorrect={false}
                 errorMessage={
@@ -88,10 +94,11 @@ export function SignUpScreen({ navigation }: Props) {
                 control={control}
                 name="password"
                 placeholder={t('auth.password')}
+                leadingIcon="lock"
                 isPassword
                 errorMessage={
                   errors.password
-                    ? t(errors.password.message ?? 'auth.passwordRequired')
+                    ? t(errors.password.message ?? 'auth.passwordRegex')
                     : undefined
                 }
               />
@@ -100,10 +107,11 @@ export function SignUpScreen({ navigation }: Props) {
                 control={control}
                 name="confirmPassword"
                 placeholder={t('auth.confirmPassword')}
+                leadingIcon="lock"
                 isPassword
                 errorMessage={
                   errors.confirmPassword
-                    ? t(errors.confirmPassword.message ?? 'auth.passwordRequired')
+                    ? t(errors.confirmPassword.message ?? 'auth.passwordsMustMatch')
                     : undefined
                 }
               />
