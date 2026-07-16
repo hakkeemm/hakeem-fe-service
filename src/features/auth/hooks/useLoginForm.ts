@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { getApiErrorCode, getApiErrorMessage } from '../../../shared/api/errors';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
+import { useGoogleSignIn } from './useGoogleSignIn';
 import { useLogin } from './useLogin';
 import { loginSchema, type LoginFormValues } from './loginSchema';
 
@@ -15,6 +15,7 @@ export function useLoginForm(
 ) {
   const { t } = useTranslation();
   const login = useLogin();
+  const googleSignIn = useGoogleSignIn();
   const [rememberMe, setRememberMe] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -43,8 +44,9 @@ export function useLoginForm(
     }
   });
 
-  const onGooglePress = () => {
-    Alert.alert(t('auth.login'), t('auth.googleComingSoon'));
+  const onGooglePress = async () => {
+    setSubmitError(null);
+    await googleSignIn.signInWithGoogle();
   };
 
   const toggleRememberMe = () => {
@@ -56,8 +58,10 @@ export function useLoginForm(
     errors: form.formState.errors,
     rememberMe,
     toggleRememberMe,
-    submitError,
+    submitError: submitError ?? googleSignIn.error,
     isSubmitting: login.isPending,
+    isGoogleSubmitting: googleSignIn.isPending,
+    isGoogleReady: googleSignIn.isReady,
     onSubmit,
     onGooglePress,
   };

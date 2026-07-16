@@ -36,6 +36,7 @@ export function LoginScreen({ navigation }: Props) {
     toggleRememberMe,
     submitError,
     isSubmitting,
+    isGoogleSubmitting,
     onSubmit,
     onGooglePress,
   } = useLoginForm(navigation);
@@ -109,7 +110,9 @@ export function LoginScreen({ navigation }: Props) {
               <SocialButton
                 provider="google"
                 label={t('auth.continueWithGoogle')}
-                onPress={onGooglePress}
+                onPress={() => void onGooglePress()}
+                loading={isGoogleSubmitting}
+                disabled={isSubmitting}
               />
             </View>
 

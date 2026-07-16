@@ -70,7 +70,8 @@
     "codeInvalid": "Enter the 6-digit code from your email",
     "backToLogin": "Back to Login",
     "verifySuccess": "Email verified successfully. Please log in.",
-    "googleComingSoon": "Google sign-in will be available soon."
+    "googleComingSoon": "Google sign-in will be available soon.",
+    "googleNotConfigured": "Google Client ID is not configured. Add EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID to your .env."
   },
   "patient": {
     "home": "Home",

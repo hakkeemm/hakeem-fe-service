@@ -70,7 +70,8 @@
     "codeInvalid": "أدخل الرمز المكوّن من ٦ أرقام من بريدك",
     "backToLogin": "العودة لتسجيل الدخول",
     "verifySuccess": "تم تأكيد البريد بنجاح. يرجى تسجيل الدخول.",
-    "googleComingSoon": "تسجيل الدخول عبر Google سيتم توفيره قريبًا."
+    "googleComingSoon": "تسجيل الدخول عبر Google سيتم توفيره قريبًا.",
+    "googleNotConfigured": "معرّف Google Client غير مضبوط. أضف EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID إلى ملف .env."
   },
   "patient": {
     "home": "الرئيسية",

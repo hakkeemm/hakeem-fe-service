@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { colors } from '../theme/colors';
@@ -11,6 +11,8 @@ interface SocialButtonProps {
   label: string;
   onPress: () => void;
   accessibilityLabel?: string;
+  loading?: boolean;
+  disabled?: boolean;
   style?: ViewStyle;
 }
 
@@ -42,17 +44,34 @@ export function SocialButton({
   label,
   onPress,
   accessibilityLabel,
+  loading = false,
+  disabled = false,
   style,
 }: SocialButtonProps) {
+  const isDisabled = disabled || loading;
+
   return (
     <Pressable
-      style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
+      style={({ pressed }) => [
+        styles.button,
+        pressed && !isDisabled && styles.pressed,
+        isDisabled && styles.disabled,
+        style,
+      ]}
       onPress={onPress}
+      disabled={isDisabled}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
     >
-      {provider === 'google' ? <GoogleMark /> : null}
-      <Text style={styles.label}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color={colors.google} />
+      ) : (
+        <>
+          {provider === 'google' ? <GoogleMark /> : null}
+          <Text style={styles.label}>{label}</Text>
+        </>
+      )}
     </Pressable>
   );
 }
@@ -73,6 +92,9 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.88,
+  },
+  disabled: {
+    opacity: 0.55,
   },
   label: {
     ...typography.button,

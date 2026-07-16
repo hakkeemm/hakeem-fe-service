@@ -38,7 +38,8 @@
         {
           "configureAndroidBackup": true
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "updates": {
       "enabled": false
