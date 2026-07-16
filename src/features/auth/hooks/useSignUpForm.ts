@@ -2,11 +2,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { getApiErrorMessage } from '../../../shared/api/errors';
+import type { AuthStackParamList } from '../navigation/AuthNavigator';
 import { useRegister } from './useRegister';
 import { registerSchema, type RegisterFormValues } from './registerSchema';
 
-export function useSignUpForm() {
+export function useSignUpForm(
+  navigation: NativeStackNavigationProp<AuthStackParamList, 'SignUp'>,
+) {
   const { t } = useTranslation();
   const register = useRegister();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -27,9 +32,9 @@ export function useSignUpForm() {
     try {
       const { confirmPassword: _confirmPassword, ...payload } = values;
       await register.mutateAsync(payload);
+      navigation.replace('VerifyEmail', { email: payload.email.trim() });
     } catch (error) {
-      const message = error instanceof Error ? error.message : t('common.error');
-      setSubmitError(message);
+      setSubmitError(getApiErrorMessage(error, t('common.error')));
     }
   });
 

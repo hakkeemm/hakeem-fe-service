@@ -2,6 +2,7 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,15 +18,23 @@ import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
-import { useSignUpForm } from '../hooks/useSignUpForm';
+import { useVerifyEmailForm } from '../hooks/useVerifyEmailForm';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
+type Props = NativeStackScreenProps<AuthStackParamList, 'VerifyEmail'>;
 
-export function SignUpScreen({ navigation }: Props) {
+export function VerifyEmailScreen({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
-  const { control, errors, submitError, isSubmitting, onSubmit } = useSignUpForm(navigation);
+  const {
+    control,
+    errors,
+    submitError,
+    isSubmitting,
+    isResending,
+    onSubmit,
+    onResend,
+  } = useVerifyEmailForm(navigation, route.params.email);
   const textAlign = isRTL ? 'right' : 'left';
 
   return (
@@ -41,24 +50,13 @@ export function SignUpScreen({ navigation }: Props) {
         >
           <View style={styles.card}>
             <View style={styles.header}>
-              <Text style={[styles.title, { textAlign }]}>{t('auth.signUpTitle')}</Text>
-              <Text style={[styles.subtitle, { textAlign }]}>{t('auth.signUpSubtitle')}</Text>
+              <Text style={[styles.title, { textAlign }]}>{t('auth.verifyEmailTitle')}</Text>
+              <Text style={[styles.subtitle, { textAlign }]}>
+                {t('auth.verifyEmailSubtitle', { email: route.params.email })}
+              </Text>
             </View>
 
             <View style={styles.form}>
-              <FormField
-                control={control}
-                name="fullName"
-                placeholder={t('auth.fullName')}
-                autoCapitalize="words"
-                autoCorrect={false}
-                errorMessage={
-                  errors.fullName
-                    ? t(errors.fullName.message ?? 'auth.fullNameRequired')
-                    : undefined
-                }
-              />
-
               <FormField
                 control={control}
                 name="email"
@@ -73,56 +71,36 @@ export function SignUpScreen({ navigation }: Props) {
 
               <FormField
                 control={control}
-                name="phoneNumber"
-                placeholder={t('auth.phoneNumber')}
-                keyboardType="phone-pad"
+                name="code"
+                placeholder={t('auth.verificationCode')}
+                keyboardType="number-pad"
+                maxLength={6}
                 autoCorrect={false}
                 errorMessage={
-                  errors.phoneNumber
-                    ? t(errors.phoneNumber.message ?? 'auth.phoneInvalid')
-                    : undefined
-                }
-              />
-
-              <FormField
-                control={control}
-                name="password"
-                placeholder={t('auth.password')}
-                isPassword
-                errorMessage={
-                  errors.password
-                    ? t(errors.password.message ?? 'auth.passwordRequired')
-                    : undefined
-                }
-              />
-
-              <FormField
-                control={control}
-                name="confirmPassword"
-                placeholder={t('auth.confirmPassword')}
-                isPassword
-                errorMessage={
-                  errors.confirmPassword
-                    ? t(errors.confirmPassword.message ?? 'auth.passwordRequired')
-                    : undefined
+                  errors.code ? t(errors.code.message ?? 'auth.codeInvalid') : undefined
                 }
               />
 
               {submitError ? <Text style={styles.submitError}>{submitError}</Text> : null}
 
               <Button
-                label={t('auth.signUp')}
+                label={t('auth.verifyAndContinue')}
                 onPress={() => void onSubmit()}
                 loading={isSubmitting}
               />
+
+              <Button
+                label={t('auth.resendCode')}
+                variant="ghost"
+                onPress={() => void onResend()}
+                loading={isResending}
+                disabled={isSubmitting}
+              />
             </View>
 
-            <Text style={styles.footerRow}>
-              {t('auth.alreadyHaveAccount')}{' '}
-              <Text style={styles.footerLink} onPress={() => navigation.navigate('Login')}>
-                {t('auth.login')}
-              </Text>
-            </Text>
+            <Pressable onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.footerLink}>{t('auth.backToLogin')}</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -170,13 +148,10 @@ const styles = StyleSheet.create({
     color: colors.error,
     textAlign: 'center',
   },
-  footerRow: {
-    ...typography.bodySmall,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
   footerLink: {
+    ...typography.bodySmall,
     color: colors.primary,
     fontWeight: '700',
+    textAlign: 'center',
   },
 });

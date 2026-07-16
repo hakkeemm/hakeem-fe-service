@@ -1,4 +1,5 @@
-import type { JwtPayload, UserRole } from '../types/user';
+import type { JwtPayload, User, UserRole } from '../types/user';
+import type { AuthResponse } from '../types/user';
 
 function toBase64(input: string): string {
   if (typeof globalThis.btoa === 'function') {
@@ -61,6 +62,39 @@ function base64UrlDecode(input: string): string {
   return fromBase64(padded);
 }
 
+const ROLE_CLAIM =
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+
+export function normalizeRole(value: unknown): UserRole | null {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw !== 'string' || !raw) {
+    return null;
+  }
+
+  switch (raw.toLowerCase()) {
+    case 'patient':
+      return 'patient';
+    case 'doctor':
+      return 'doctor';
+    case 'assistant':
+      return 'assistant';
+    case 'admin':
+      return 'admin';
+    default:
+      return null;
+  }
+}
+
+function pickString(raw: Record<string, unknown>, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = raw[key];
+    if (typeof value === 'string' && value.length > 0) {
+      return value;
+    }
+  }
+  return null;
+}
+
 export function decodeJwtPayload(token: string): JwtPayload | null {
   try {
     const parts = token.split('.');
@@ -69,13 +103,35 @@ export function decodeJwtPayload(token: string): JwtPayload | null {
     }
 
     const json = base64UrlDecode(parts[1]);
-    const payload = JSON.parse(json) as JwtPayload;
+    const raw = JSON.parse(json) as Record<string, unknown>;
 
-    if (!payload.role || !payload.sub) {
+    const sub = pickString(raw, [
+      'sub',
+      'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier',
+    ]);
+    const email = pickString(raw, [
+      'email',
+      'Email',
+      'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+    ]);
+    const name = pickString(raw, ['full_name', 'name', 'unique_name']) ?? email ?? '';
+    const role =
+      normalizeRole(raw.role) ??
+      normalizeRole(raw.Role) ??
+      normalizeRole(raw[ROLE_CLAIM]);
+
+    if (!sub || !role) {
       return null;
     }
 
-    return payload;
+    return {
+      sub,
+      email: email ?? '',
+      name,
+      role,
+      exp: typeof raw.exp === 'number' ? raw.exp : 0,
+      iat: typeof raw.iat === 'number' ? raw.iat : 0,
+    };
   } catch {
     return null;
   }
@@ -83,6 +139,21 @@ export function decodeJwtPayload(token: string): JwtPayload | null {
 
 export function getRoleFromToken(token: string): UserRole | null {
   return decodeJwtPayload(token)?.role ?? null;
+}
+
+export function buildUserFromAuthResponse(auth: AuthResponse): User | null {
+  const payload = decodeJwtPayload(auth.accessToken);
+  const role = normalizeRole(auth.role) ?? payload?.role ?? null;
+  if (!payload || !role) {
+    return null;
+  }
+
+  return {
+    id: payload.sub,
+    email: payload.email,
+    name: payload.name,
+    role,
+  };
 }
 
 /** Creates an unsigned mock JWT for scaffold / demo auth only. */

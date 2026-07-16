@@ -58,6 +58,18 @@
     "passwordRequired": "Password is required",
     "passwordMin": "Password must be at least 6 characters",
     "passwordsMustMatch": "Passwords do not match",
+    "emailNotVerified": "Email is not verified. Please check your inbox.",
+    "registerSuccess": "Registration successful. Please check your email to verify your account.",
+    "verifyEmailTitle": "Verify Email",
+    "verifyEmailSubtitle": "Enter the 6-digit code we sent to {{email}}.",
+    "verificationCode": "Verification code",
+    "verifyAndContinue": "Verify & Continue",
+    "resendCode": "Resend code",
+    "codeResent": "A new verification code was sent if the account exists.",
+    "codeRequired": "Verification code is required",
+    "codeInvalid": "Enter the 6-digit code from your email",
+    "backToLogin": "Back to Login",
+    "verifySuccess": "Email verified successfully. Please log in.",
     "googleComingSoon": "Google sign-in will be available soon."
   },
   "patient": {

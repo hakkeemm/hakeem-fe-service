@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 
 export function useAuthSession() {
   const accessToken = useAuthStore((state) => state.accessToken);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
   const user = useAuthStore((state) => state.user);
   const role = useAuthStore((state) => state.role);
   const isHydrated = useAuthStore((state) => state.isHydrated);
@@ -25,12 +26,15 @@ export function useAuthSession() {
 
     async function restoreSession(): Promise<void> {
       try {
-        const [token, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
+        const [token, storedRefreshToken] = await Promise.all([
+          getAccessToken(),
+          getRefreshToken(),
+        ]);
         if (cancelled) {
           return;
         }
 
-        if (!token || !refreshToken) {
+        if (!token || !storedRefreshToken) {
           clearSession();
           return;
         }
@@ -44,7 +48,7 @@ export function useAuthSession() {
 
         setSession({
           accessToken: token,
-          refreshToken,
+          refreshToken: storedRefreshToken,
           user: {
             id: payload.sub,
             email: payload.email,
@@ -78,11 +82,12 @@ export function useAuthSession() {
   }, [clearSession]);
 
   return {
-    isAuthenticated: Boolean(accessToken && role),
+    isAuthenticated: Boolean(accessToken && role && role !== 'admin'),
     isRestoring: isRestoring && !isHydrated,
     isHydrated,
     user,
     role,
+    refreshToken,
     logout,
   };
 }

@@ -38,7 +38,7 @@ export function LoginScreen({ navigation }: Props) {
     isSubmitting,
     onSubmit,
     onGooglePress,
-  } = useLoginForm();
+  } = useLoginForm(navigation);
 
   const textAlign = isRTL ? 'right' : 'left';
 

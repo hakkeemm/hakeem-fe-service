@@ -58,6 +58,18 @@
     "passwordRequired": "كلمة المرور مطلوبة",
     "passwordMin": "يجب أن تكون كلمة المرور ٦ أحرف على الأقل",
     "passwordsMustMatch": "كلمتا المرور غير متطابقتين",
+    "emailNotVerified": "البريد الإلكتروني غير مُفعّل. يرجى التحقق من صندوق الوارد.",
+    "registerSuccess": "تم التسجيل بنجاح. يرجى التحقق من بريدك لتفعيل الحساب.",
+    "verifyEmailTitle": "تأكيد البريد الإلكتروني",
+    "verifyEmailSubtitle": "أدخل الرمز المكوّن من ٦ أرقام الذي أرسلناه إلى {{email}}.",
+    "verificationCode": "رمز التحقق",
+    "verifyAndContinue": "تأكيد والمتابعة",
+    "resendCode": "إعادة إرسال الرمز",
+    "codeResent": "تم إرسال رمز تحقق جديد إذا كان الحساب موجودًا.",
+    "codeRequired": "رمز التحقق مطلوب",
+    "codeInvalid": "أدخل الرمز المكوّن من ٦ أرقام من بريدك",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "verifySuccess": "تم تأكيد البريد بنجاح. يرجى تسجيل الدخول.",
     "googleComingSoon": "تسجيل الدخول عبر Google سيتم توفيره قريبًا."
   },
   "patient": {

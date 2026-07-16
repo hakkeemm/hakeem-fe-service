@@ -1,9 +1,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
+import { AUTH_ENDPOINTS } from '../../features/auth/api/authEndpoints';
+import type { AuthResponse } from '../types/user';
 import { useAuthStore } from '../store/authStore';
 import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from './tokenStorage';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://api.example.com';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.2.2:8000';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
@@ -38,6 +40,11 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Don't try to refresh the refresh call itself
+    if (originalRequest.url?.includes(AUTH_ENDPOINTS.refreshToken)) {
+      return Promise.reject(error);
+    }
+
     if (isRefreshing) {
       const token = await new Promise<string | null>((resolve) => {
         refreshWaiters.push(resolve);
@@ -60,31 +67,17 @@ apiClient.interceptors.response.use(
         throw new Error('No refresh token');
       }
 
-      const useMock = process.env.EXPO_PUBLIC_USE_MOCK_AUTH !== 'false';
+      const { data } = await axios.post<AuthResponse>(
+        `${API_URL}${AUTH_ENDPOINTS.refreshToken}`,
+        { refreshToken },
+        { headers: { 'Content-Type': 'application/json' } },
+      );
 
-      let accessToken: string;
-      let nextRefreshToken: string;
+      await saveTokens(data.accessToken, data.refreshToken);
+      useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
 
-      if (useMock) {
-        accessToken = useAuthStore.getState().accessToken ?? '';
-        nextRefreshToken = refreshToken;
-        if (!accessToken) {
-          throw new Error('No access token to refresh in mock mode');
-        }
-      } else {
-        const { data } = await axios.post<{ accessToken: string; refreshToken: string }>(
-          `${API_URL}/auth/refresh`,
-          { refreshToken },
-        );
-        accessToken = data.accessToken;
-        nextRefreshToken = data.refreshToken;
-      }
-
-      await saveTokens(accessToken, nextRefreshToken);
-      useAuthStore.getState().setTokens(accessToken, nextRefreshToken);
-
-      resolveRefreshWaiters(accessToken);
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+      resolveRefreshWaiters(data.accessToken);
+      originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
       resolveRefreshWaiters(null);

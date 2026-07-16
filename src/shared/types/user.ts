@@ -1,4 +1,4 @@
-export type UserRole = 'patient' | 'doctor' | 'assistant';
+export type UserRole = 'patient' | 'doctor' | 'assistant' | 'admin';
 
 export interface User {
   id: string;
@@ -21,11 +21,10 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+/** Matches backend LoginRequestDto */
 export interface LoginRequest {
   email: string;
   password: string;
-  /** Mock-only: select which role JWT to issue during scaffold */
-  role?: UserRole;
 }
 
 /** Matches backend RegisterRequestDto */
@@ -36,8 +35,43 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface LoginResponse {
+/** Matches backend AuthResponseDto */
+export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
-  user: User;
+  expiresAt: string;
+  role: string;
 }
+
+export interface RegisterResponse {
+  message: string;
+}
+
+export interface VerifyEmailRequest {
+  email: string;
+  code: string;
+}
+
+export interface ResendVerificationRequest {
+  email: string;
+}
+
+export interface GoogleLoginRequest {
+  idToken: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface ApiErrorBody {
+  error?: string;
+  code?: string;
+  Error?: string;
+  Code?: string;
+  message?: string;
+  Message?: string;
+}
+
+/** @deprecated Use AuthResponse — kept for gradual migration */
+export type LoginResponse = AuthResponse & { user?: User };

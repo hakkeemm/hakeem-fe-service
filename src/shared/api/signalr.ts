@@ -7,7 +7,8 @@ import {
 
 import { getAccessToken } from './tokenStorage';
 
-const HUB_URL = process.env.EXPO_PUBLIC_SIGNALR_HUB_URL ?? 'https://api.example.com/hubs/hakeem';
+const HUB_URL = process.env.EXPO_PUBLIC_SIGNALR_HUB_URL ?? '';
+const SIGNALR_ENABLED = process.env.EXPO_PUBLIC_SIGNALR_ENABLED === 'true';
 
 let connection: HubConnection | null = null;
 
@@ -16,25 +17,30 @@ export function getSignalRConnection(): HubConnection | null {
 }
 
 export async function startSignalRConnection(): Promise<HubConnection | null> {
+  // Backend has no SignalR hub yet — skip until explicitly enabled.
+  if (!SIGNALR_ENABLED || !HUB_URL) {
+    return null;
+  }
+
   if (connection?.state === HubConnectionState.Connected) {
     return connection;
   }
 
-  // Scaffold: skip real socket when using mock auth / placeholder hub
-  if (process.env.EXPO_PUBLIC_USE_MOCK_AUTH !== 'false') {
+  try {
+    connection = new HubConnectionBuilder()
+      .withUrl(HUB_URL, {
+        accessTokenFactory: async () => (await getAccessToken()) ?? '',
+      })
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.None)
+      .build();
+
+    await connection.start();
+    return connection;
+  } catch {
+    connection = null;
     return null;
   }
-
-  connection = new HubConnectionBuilder()
-    .withUrl(HUB_URL, {
-      accessTokenFactory: async () => (await getAccessToken()) ?? '',
-    })
-    .withAutomaticReconnect()
-    .configureLogging(LogLevel.Information)
-    .build();
-
-  await connection.start();
-  return connection;
 }
 
 export async function stopSignalRConnection(): Promise<void> {

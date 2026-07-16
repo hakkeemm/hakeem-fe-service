@@ -3,11 +3,16 @@ import { Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { getApiErrorCode, getApiErrorMessage } from '../../../shared/api/errors';
+import type { AuthStackParamList } from '../navigation/AuthNavigator';
 import { useLogin } from './useLogin';
 import { loginSchema, type LoginFormValues } from './loginSchema';
 
-export function useLoginForm() {
+export function useLoginForm(
+  navigation: NativeStackNavigationProp<AuthStackParamList, 'Login'>,
+) {
   const { t } = useTranslation();
   const login = useLogin();
   const [rememberMe, setRememberMe] = useState(false);
@@ -18,17 +23,23 @@ export function useLoginForm() {
     defaultValues: {
       email: '',
       password: '',
-      role: 'patient',
     },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
     try {
-      await login.mutateAsync(values);
+      await login.mutateAsync({
+        email: values.email,
+        password: values.password,
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : t('common.error');
-      setSubmitError(message);
+      const code = getApiErrorCode(error);
+      if (code === 'Auth.EmailNotVerified') {
+        navigation.navigate('VerifyEmail', { email: values.email.trim() });
+        return;
+      }
+      setSubmitError(getApiErrorMessage(error, t('common.error')));
     }
   });
 

@@ -1,90 +1,67 @@
-import type {
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  UserRole,
-} from '../../../shared/types/user';
-import { createMockJwt } from '../../../shared/api/jwt';
 import { apiClient } from '../../../shared/api/client';
+import type {
+  AuthResponse,
+  GoogleLoginRequest,
+  LoginRequest,
+  RefreshTokenRequest,
+  RegisterRequest,
+  RegisterResponse,
+  ResendVerificationRequest,
+  VerifyEmailRequest,
+} from '../../../shared/types/user';
+import { AUTH_ENDPOINTS } from './authEndpoints';
 
-function mockUserName(role: UserRole): string {
-  switch (role) {
-    case 'doctor':
-      return 'Dr. Sara Hassan';
-    case 'assistant':
-      return 'Mona Assistant';
-    default:
-      return 'Ahmed Patient';
-  }
-}
-
-export async function loginRequest(body: LoginRequest): Promise<LoginResponse> {
-  const useMock = process.env.EXPO_PUBLIC_USE_MOCK_AUTH !== 'false';
-
-  if (useMock) {
-    const role: UserRole = body.role ?? 'patient';
-    const user = {
-      id: `${role}-001`,
-      email: body.email,
-      name: mockUserName(role),
-      role,
-    };
-
-    const accessToken = createMockJwt({
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 400));
-
-    return {
-      accessToken,
-      refreshToken: `refresh-${role}-${Date.now()}`,
-      user,
-    };
-  }
-
-  const { data } = await apiClient.post<LoginResponse>('/auth/login', {
+export async function loginRequest(body: LoginRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>(AUTH_ENDPOINTS.login, {
     email: body.email,
     password: body.password,
   });
   return data;
 }
 
-export async function registerRequest(body: RegisterRequest): Promise<LoginResponse> {
-  const useMock = process.env.EXPO_PUBLIC_USE_MOCK_AUTH !== 'false';
-
-  if (useMock) {
-    const user = {
-      id: `patient-${Date.now()}`,
-      email: body.email,
-      name: body.fullName,
-      role: 'patient' as const,
-    };
-
-    const accessToken = createMockJwt({
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 400));
-
-    return {
-      accessToken,
-      refreshToken: `refresh-patient-${Date.now()}`,
-      user,
-    };
-  }
-
-  const { data } = await apiClient.post<LoginResponse>('/auth/register', {
+export async function registerRequest(body: RegisterRequest): Promise<RegisterResponse> {
+  const { data } = await apiClient.post<RegisterResponse>(AUTH_ENDPOINTS.register, {
     email: body.email,
     fullName: body.fullName,
     phoneNumber: body.phoneNumber,
     password: body.password,
   });
   return data;
+}
+
+export async function verifyEmailRequest(body: VerifyEmailRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>(AUTH_ENDPOINTS.verifyEmail, {
+    email: body.email,
+    code: body.code,
+  });
+  return data;
+}
+
+export async function resendVerificationRequest(
+  body: ResendVerificationRequest,
+): Promise<RegisterResponse> {
+  const { data } = await apiClient.post<RegisterResponse>(AUTH_ENDPOINTS.resendVerification, {
+    email: body.email,
+  });
+  return data;
+}
+
+export async function googleLoginRequest(body: GoogleLoginRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>(AUTH_ENDPOINTS.google, {
+    idToken: body.idToken,
+  });
+  return data;
+}
+
+export async function refreshTokenRequest(body: RefreshTokenRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>(AUTH_ENDPOINTS.refreshToken, {
+    refreshToken: body.refreshToken,
+  });
+  return data;
+}
+
+export async function logoutRequest(body: RefreshTokenRequest): Promise<void> {
+  await apiClient.post(AUTH_ENDPOINTS.logout, {
+    refreshToken: body.refreshToken,
+  });
 }
