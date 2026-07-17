@@ -1,4 +1,5 @@
 import type { AdsSlide } from '../../../shared/components/ads';
+import type { SpecialtyId } from './mockCategories';
 
 /** Remote mock doctor photos. */
 export const MOCK_DOCTOR_IMAGES = {
@@ -8,6 +9,8 @@ export const MOCK_DOCTOR_IMAGES = {
   femaleSmile: 'https://randomuser.me/api/portraits/women/68.jpg',
   maleScrubs: 'https://randomuser.me/api/portraits/men/75.jpg',
   clinicTeam: 'https://randomuser.me/api/portraits/women/65.jpg',
+  maleDoctor: 'https://randomuser.me/api/portraits/men/52.jpg',
+  femaleDoctor: 'https://randomuser.me/api/portraits/women/52.jpg',
 } as const;
 
 export type MockDoctorImageKey = keyof typeof MOCK_DOCTOR_IMAGES;
@@ -16,6 +19,8 @@ export type MockDoctor = {
   id: string;
   name: string;
   specialty: string;
+  hospital: string;
+  specialtyId: SpecialtyId;
   imageUrl: string;
   rating: number;
   reviewCount: number;
@@ -24,51 +29,76 @@ export type MockDoctor = {
 
 export const MOCK_DOCTORS: MockDoctor[] = [
   {
-    id: 'doc-1',
-    name: 'Chloe Kelly',
-    specialty: 'M.Ch. (Neuro)',
-    imageUrl: MOCK_DOCTOR_IMAGES.femaleStethoscope,
-    rating: 4.5,
-    reviewCount: 2530,
+    id: 'doc-near-1',
+    name: 'Dr. Leslie Alexander',
+    specialty: 'Cardiologist',
+    hospital: 'Siloam Hospital',
+    specialtyId: 'cardiology',
+    imageUrl: MOCK_DOCTOR_IMAGES.maleDoctor,
+    rating: 4.9,
+    reviewCount: 174,
     fee: 50.99,
   },
   {
-    id: 'doc-2',
-    name: 'Lauren Hemp',
-    specialty: 'Spinal Surgery',
-    imageUrl: MOCK_DOCTOR_IMAGES.femaleSmile,
+    id: 'doc-near-2',
+    name: 'Dr. Robert Fox',
+    specialty: 'Internal Medicine',
+    hospital: 'Stanford Hospital',
+    specialtyId: 'pathology',
+    imageUrl: MOCK_DOCTOR_IMAGES.maleGlasses,
     rating: 4.5,
-    reviewCount: 2530,
-    fee: 50.99,
+    reviewCount: 83,
+    fee: 55.0,
+  },
+  {
+    id: 'doc-near-3',
+    name: 'Dr. Kristin Watson',
+    specialty: 'Dermatologist',
+    hospital: 'Methodist Hospital',
+    specialtyId: 'dermatology',
+    imageUrl: MOCK_DOCTOR_IMAGES.femaleDoctor,
+    rating: 4.9,
+    reviewCount: 224,
+    fee: 48.0,
+  },
+  {
+    id: 'doc-near-4',
+    name: 'Dr. Arlene McCoy',
+    specialty: 'Dermatologist',
+    hospital: 'Methodist Hospital',
+    specialtyId: 'dermatology',
+    imageUrl: MOCK_DOCTOR_IMAGES.femaleSmile,
+    rating: 4.9,
+    reviewCount: 224,
+    fee: 48.0,
   },
   {
     id: 'doc-3',
     name: 'Dr. James Carter',
     specialty: 'Cardiology',
-    imageUrl: MOCK_DOCTOR_IMAGES.maleGlasses,
+    hospital: 'City Medical Center',
+    specialtyId: 'cardiology',
+    imageUrl: MOCK_DOCTOR_IMAGES.maleCoat,
     rating: 4.8,
     reviewCount: 1842,
     fee: 65.0,
   },
   {
-    id: 'doc-4',
-    name: 'Dr. Ahmed Hassan',
-    specialty: 'Orthopedics',
-    imageUrl: MOCK_DOCTOR_IMAGES.maleCoat,
-    rating: 4.6,
-    reviewCount: 980,
-    fee: 55.5,
-  },
-  {
     id: 'doc-5',
     name: 'Dr. Emily Watson',
     specialty: 'Pediatrics',
+    hospital: 'Children Wellness Clinic',
+    specialtyId: 'pediatrics',
     imageUrl: MOCK_DOCTOR_IMAGES.clinicTeam,
     rating: 4.9,
     reviewCount: 3120,
     fee: 45.0,
   },
 ];
+
+export function getNearbyDoctors(): MockDoctor[] {
+  return MOCK_DOCTORS;
+}
 
 export function getPopularDoctors(limit = 4): MockDoctor[] {
   return MOCK_DOCTORS.slice(0, limit);

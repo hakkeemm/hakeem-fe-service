@@ -107,6 +107,12 @@
     "popularDoctors": "Popular Doctors",
     "fees": "Fees",
     "bookNow": "Book Now",
+    "nearbyDoctors": "Nearby Doctor",
+    "seeMore": "See more",
+    "filterBySpecialist": "Filter by specialist",
+    "noDoctorsFound": "No doctors found",
+    "noDoctorsFoundMessage": "Try choosing a different specialty or clear the filter.",
+    "clearFilter": "Clear filter",
     "categories": {
       "neurology": "Neurology",
       "cardiology": "Cardiology",

@@ -107,6 +107,12 @@
     "popularDoctors": "الأطباء الأكثر شيوعاً",
     "fees": "الرسوم",
     "bookNow": "احجز الآن",
+    "nearbyDoctors": "أطباء قريبون",
+    "seeMore": "عرض المزيد",
+    "filterBySpecialist": "تصفية حسب التخصص",
+    "noDoctorsFound": "لا يوجد أطباء",
+    "noDoctorsFoundMessage": "جرّب تخصصاً آخر أو امسح التصفية.",
+    "clearFilter": "مسح التصفية",
     "categories": {
       "neurology": "طب الأعصاب",
       "cardiology": "طب القلب",
