@@ -8,7 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { EmptyState } from '../../../shared/components/EmptyState';
-import { colors } from '../../../shared/theme/colors';
+import { homeHeaderColors } from '../../../shared/components/homeHeader';
 import { spacing } from '../../../shared/theme/spacing';
 import { DoctorCard } from '../components/DoctorCard';
 import {
@@ -142,7 +142,7 @@ export function SearchResultsListScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: homeHeaderColors.background,
   },
   list: {
     paddingHorizontal: spacing.lg,
