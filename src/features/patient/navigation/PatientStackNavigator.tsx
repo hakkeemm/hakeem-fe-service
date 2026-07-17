@@ -6,6 +6,7 @@ import { BookingConfirmScreen } from '../screens/BookingConfirmScreen';
 import { BookingSuccessScreen } from '../screens/BookingSuccessScreen';
 import { DoctorProfileScreen } from '../screens/DoctorProfileScreen';
 import { FilterScreen } from '../screens/FilterScreen';
+import { NotificationsCenterScreen } from '../screens/NotificationsCenterScreen';
 import { PaymentScreen } from '../screens/PaymentScreen';
 import { RateReviewScreen } from '../screens/RateReviewScreen';
 import { SearchResultsListScreen } from '../screens/SearchResultsListScreen';
@@ -18,6 +19,7 @@ export type PatientStackParamList = {
   SearchResultsList: undefined;
   SearchResultsMap: undefined;
   Filter: undefined;
+  Notifications: undefined;
   DoctorProfile: undefined;
   SlotPicker: undefined;
   BookingConfirm: undefined;
@@ -40,6 +42,11 @@ export function PatientStackNavigator() {
       <Stack.Screen name="SearchResultsList" component={SearchResultsListScreen} />
       <Stack.Screen name="SearchResultsMap" component={SearchResultsMapScreen} />
       <Stack.Screen name="Filter" component={FilterScreen} />
+      <Stack.Screen
+        name="Notifications"
+        component={NotificationsCenterScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
       <Stack.Screen name="SlotPicker" component={SlotPickerScreen} />
       <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} />

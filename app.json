@@ -39,7 +39,8 @@
           "configureAndroidBackup": true
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-video"
     ],
     "updates": {
       "enabled": false

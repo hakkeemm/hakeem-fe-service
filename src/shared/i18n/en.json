@@ -14,7 +14,17 @@
     "restartNow": "Restart now",
     "show": "Show",
     "hide": "Hide",
-    "back": "Back"
+    "back": "Back",
+    "goodMorning": "Good Morning",
+    "goodAfternoon": "Good Afternoon",
+    "goodEvening": "Good Evening",
+    "notifications": "Notifications",
+    "notificationsTitle": "Notifications",
+    "notificationsEmpty": "You have no notifications yet.",
+    "markAsRead": "Mark as read",
+    "delete": "Delete",
+    "moreOptions": "More options",
+    "filter": "Filter"
   },
   "auth": {
     "loginTitle": "Welcome To Hakeem",
@@ -82,8 +92,16 @@
   "patient": {
     "home": "Home",
     "search": "Search",
+    "doctor": "Doctor",
+    "appointment": "Appointment",
     "appointments": "My appointments",
-    "profile": "Profile"
+    "profile": "Profile",
+    "quickAction": "Quick action",
+    "searchDoctors": "Search by doctors...",
+    "lookingForDoctor": "Looking for desired doctor?",
+    "connect": "Connect",
+    "adHealthTips": "Your health journey starts here",
+    "adSpecialists": "Top specialists near you"
   },
   "doctor": {
     "home": "Home",

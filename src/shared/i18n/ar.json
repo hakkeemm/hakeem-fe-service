@@ -14,7 +14,17 @@
     "restartNow": "إعادة التشغيل الآن",
     "show": "إظهار",
     "hide": "إخفاء",
-    "back": "رجوع"
+    "back": "رجوع",
+    "goodMorning": "صباح الخير",
+    "goodAfternoon": "طاب يومك",
+    "goodEvening": "مساء الخير",
+    "notifications": "الإشعارات",
+    "notificationsTitle": "الإشعارات",
+    "notificationsEmpty": "لا توجد إشعارات بعد.",
+    "markAsRead": "تعيين كمقروء",
+    "delete": "حذف",
+    "moreOptions": "المزيد",
+    "filter": "تصفية"
   },
   "auth": {
     "loginTitle": "مرحبًا بك في حكيم",
@@ -82,8 +92,16 @@
   "patient": {
     "home": "الرئيسية",
     "search": "بحث",
+    "doctor": "الطبيب",
+    "appointment": "الموعد",
     "appointments": "مواعيدي",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "quickAction": "إجراء سريع",
+    "searchDoctors": "ابحث عن الأطباء...",
+    "lookingForDoctor": "تبحث عن الطبيب المناسب؟",
+    "connect": "تواصل",
+    "adHealthTips": "رحلتك الصحية تبدأ من هنا",
+    "adSpecialists": "أفضل الأخصائيين بالقرب منك"
   },
   "doctor": {
     "home": "الرئيسية",

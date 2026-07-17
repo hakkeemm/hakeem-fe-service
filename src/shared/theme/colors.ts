@@ -26,6 +26,11 @@ export const colors = {
   disabled: '#A8B3BE',
   overlay: 'rgba(26, 29, 33, 0.45)',
 
+  /** Patient / role bottom navigation */
+  navActive: '#2F80ED',
+  navInactive: '#A0A7B0',
+  navFab: '#2F80ED',
+
   /** Google brand palette */
   google: '#4285F4',
   googleRed: '#EA4335',
