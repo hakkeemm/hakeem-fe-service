@@ -27,6 +27,8 @@ import {
 import { useRTL } from '../../../shared/hooks/useRTL';
 import { useAuthStore } from '../../../shared/store/authStore';
 import { spacing } from '../../../shared/theme/spacing';
+import { DoctorCategoriesSection } from '../components/DoctorCategoriesSection';
+import { PopularDoctorsSection } from '../components/PopularDoctorsSection';
 import { getMockHomeAdsSlides } from '../data/mockDoctors';
 import type { PatientStackParamList } from '../navigation/PatientStackNavigator';
 import type { PatientTabParamList } from '../navigation/PatientTabNavigator';
@@ -149,6 +151,17 @@ export function HomeScreen() {
           connectLabel={t('patient.connect')}
           onConnect={() => navigation.navigate('Search')}
         />
+
+        <DoctorCategoriesSection
+          onSeeAllPress={() => navigation.navigate('FindYourDoctor')}
+          onCategoryPress={() => navigation.navigate('Search')}
+        />
+
+        <PopularDoctorsSection
+          onSeeAllPress={() => navigation.navigate('Search')}
+          onDoctorPress={() => navigation.navigate('DoctorProfile')}
+          onBookPress={() => navigation.navigate('DoctorProfile')}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -162,7 +175,8 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
+    // Extra space so the last cards clear the floating center FAB
+    paddingBottom: spacing.xxl + 32,
     gap: spacing.md,
   },
   topRow: {

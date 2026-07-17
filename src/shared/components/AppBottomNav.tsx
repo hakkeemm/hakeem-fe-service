@@ -123,8 +123,8 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
   };
 
   return (
-    <View style={[styles.wrapper, { height: totalHeight + FAB_OVERHANG }]}>
-      <View style={[styles.barHost, { height: totalHeight, marginTop: FAB_OVERHANG }]}>
+    <View style={[styles.wrapper, { height: totalHeight }]} pointerEvents="box-none">
+      <View style={[styles.barHost, { height: totalHeight }]}>
         <Svg width={width} height={totalHeight} style={StyleSheet.absoluteFill}>
           <Path d={buildNotchPath(width, totalHeight)} fill={colors.surface} />
         </Svg>
@@ -141,7 +141,7 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
           accessibilityRole="button"
           accessibilityLabel={centerAction.accessibilityLabel}
           onPress={centerAction.onPress}
-          style={styles.fab}
+          style={[styles.fab, { top: -FAB_OVERHANG }]}
         >
           <BottomNavIcon name="plus" color={colors.surface} size={28} />
         </Pressable>
@@ -153,6 +153,7 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: 'transparent',
+    overflow: 'visible',
   },
   barHost: {
     overflow: 'visible',
@@ -196,7 +197,6 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    top: 0,
     alignSelf: 'center',
     left: '50%',
     marginLeft: -FAB_SIZE / 2,

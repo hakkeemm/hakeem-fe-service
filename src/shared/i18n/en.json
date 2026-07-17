@@ -101,7 +101,30 @@
     "lookingForDoctor": "Looking for desired doctor?",
     "connect": "Connect",
     "adHealthTips": "Your health journey starts here",
-    "adSpecialists": "Top specialists near you"
+    "adSpecialists": "Top specialists near you",
+    "findYourDoctor": "Find your doctor",
+    "seeAll": "See All",
+    "popularDoctors": "Popular Doctors",
+    "fees": "Fees",
+    "bookNow": "Book Now",
+    "categories": {
+      "neurology": "Neurology",
+      "cardiology": "Cardiology",
+      "orthopedics": "Orthopedics",
+      "pathology": "Pathology",
+      "nephrology": "Nephrology",
+      "anesthesiology": "Anesthesiology",
+      "ophthalmology": "Ophthalmology",
+      "pediatrics": "Pediatrics",
+      "oncology": "Oncology",
+      "dermatology": "Dermatology",
+      "psychiatry": "Psychiatry",
+      "generalSurgery": "General Surgery",
+      "endocrinology": "Endocrinology",
+      "radiology": "Radiology",
+      "surgery": "Surgery",
+      "geriatrics": "Geriatrics"
+    }
   },
   "doctor": {
     "home": "Home",

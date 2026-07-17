@@ -1,4 +1,5 @@
 import React from 'react';
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AppointmentDetailScreen } from '../screens/AppointmentDetailScreen';
@@ -6,16 +7,18 @@ import { BookingConfirmScreen } from '../screens/BookingConfirmScreen';
 import { BookingSuccessScreen } from '../screens/BookingSuccessScreen';
 import { DoctorProfileScreen } from '../screens/DoctorProfileScreen';
 import { FilterScreen } from '../screens/FilterScreen';
+import { FindYourDoctorScreen } from '../screens/FindYourDoctorScreen';
 import { NotificationsCenterScreen } from '../screens/NotificationsCenterScreen';
 import { PaymentScreen } from '../screens/PaymentScreen';
 import { RateReviewScreen } from '../screens/RateReviewScreen';
 import { SearchResultsListScreen } from '../screens/SearchResultsListScreen';
 import { SearchResultsMapScreen } from '../screens/SearchResultsMapScreen';
 import { SlotPickerScreen } from '../screens/SlotPickerScreen';
-import { PatientTabNavigator } from './PatientTabNavigator';
+import { PatientTabNavigator, type PatientTabParamList } from './PatientTabNavigator';
 
 export type PatientStackParamList = {
-  PatientTabs: undefined;
+  PatientTabs: NavigatorScreenParams<PatientTabParamList>;
+  FindYourDoctor: undefined;
   SearchResultsList: undefined;
   SearchResultsMap: undefined;
   Filter: undefined;
@@ -45,6 +48,11 @@ export function PatientStackNavigator() {
       <Stack.Screen
         name="Notifications"
         component={NotificationsCenterScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="FindYourDoctor"
+        component={FindYourDoctorScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />

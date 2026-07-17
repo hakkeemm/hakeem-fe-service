@@ -101,7 +101,30 @@
     "lookingForDoctor": "تبحث عن الطبيب المناسب؟",
     "connect": "تواصل",
     "adHealthTips": "رحلتك الصحية تبدأ من هنا",
-    "adSpecialists": "أفضل الأخصائيين بالقرب منك"
+    "adSpecialists": "أفضل الأخصائيين بالقرب منك",
+    "findYourDoctor": "ابحث عن طبيبك",
+    "seeAll": "عرض الكل",
+    "popularDoctors": "الأطباء الأكثر شيوعاً",
+    "fees": "الرسوم",
+    "bookNow": "احجز الآن",
+    "categories": {
+      "neurology": "طب الأعصاب",
+      "cardiology": "طب القلب",
+      "orthopedics": "جراحة العظام",
+      "pathology": "علم الأمراض",
+      "nephrology": "طب الكلى",
+      "anesthesiology": "التخدير",
+      "ophthalmology": "طب العيون",
+      "pediatrics": "طب الأطفال",
+      "oncology": "علاج الأورام",
+      "dermatology": "الأمراض الجلدية",
+      "psychiatry": "الطب النفسي",
+      "generalSurgery": "الجراحة العامة",
+      "endocrinology": "الغدد الصماء",
+      "radiology": "الأشعة",
+      "surgery": "الجراحة",
+      "geriatrics": "طب المسنين"
+    }
   },
   "doctor": {
     "home": "الرئيسية",

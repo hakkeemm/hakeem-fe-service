@@ -1,4 +1,4 @@
-import type { AdsSlide } from '../../shared/components/ads';
+import type { AdsSlide } from '../../../shared/components/ads';
 
 /** Remote mock doctor photos. */
 export const MOCK_DOCTOR_IMAGES = {
@@ -17,40 +17,62 @@ export type MockDoctor = {
   name: string;
   specialty: string;
   imageUrl: string;
+  rating: number;
+  reviewCount: number;
+  fee: number;
 };
 
 export const MOCK_DOCTORS: MockDoctor[] = [
   {
     id: 'doc-1',
-    name: 'Dr. James Carter',
-    specialty: 'Cardiology',
-    imageUrl: MOCK_DOCTOR_IMAGES.maleGlasses,
+    name: 'Chloe Kelly',
+    specialty: 'M.Ch. (Neuro)',
+    imageUrl: MOCK_DOCTOR_IMAGES.femaleStethoscope,
+    rating: 4.5,
+    reviewCount: 2530,
+    fee: 50.99,
   },
   {
     id: 'doc-2',
-    name: 'Dr. Sarah Mitchell',
-    specialty: 'Dermatology',
-    imageUrl: MOCK_DOCTOR_IMAGES.femaleStethoscope,
+    name: 'Lauren Hemp',
+    specialty: 'Spinal Surgery',
+    imageUrl: MOCK_DOCTOR_IMAGES.femaleSmile,
+    rating: 4.5,
+    reviewCount: 2530,
+    fee: 50.99,
   },
   {
     id: 'doc-3',
-    name: 'Dr. Ahmed Hassan',
-    specialty: 'Orthopedics',
-    imageUrl: MOCK_DOCTOR_IMAGES.maleCoat,
+    name: 'Dr. James Carter',
+    specialty: 'Cardiology',
+    imageUrl: MOCK_DOCTOR_IMAGES.maleGlasses,
+    rating: 4.8,
+    reviewCount: 1842,
+    fee: 65.0,
   },
   {
     id: 'doc-4',
-    name: 'Dr. Emily Watson',
-    specialty: 'Pediatrics',
-    imageUrl: MOCK_DOCTOR_IMAGES.femaleSmile,
+    name: 'Dr. Ahmed Hassan',
+    specialty: 'Orthopedics',
+    imageUrl: MOCK_DOCTOR_IMAGES.maleCoat,
+    rating: 4.6,
+    reviewCount: 980,
+    fee: 55.5,
   },
   {
     id: 'doc-5',
-    name: 'Dr. Michael Brown',
-    specialty: 'Neurology',
-    imageUrl: MOCK_DOCTOR_IMAGES.maleScrubs,
+    name: 'Dr. Emily Watson',
+    specialty: 'Pediatrics',
+    imageUrl: MOCK_DOCTOR_IMAGES.clinicTeam,
+    rating: 4.9,
+    reviewCount: 3120,
+    fee: 45.0,
   },
 ];
+
+export function getPopularDoctors(limit = 4): MockDoctor[] {
+  return MOCK_DOCTORS.slice(0, limit);
+}
 
 type HomeAdsCopy = {
   lookingForDoctor: string;
