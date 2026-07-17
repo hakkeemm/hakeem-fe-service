@@ -33,21 +33,23 @@ const PAGE_BACKGROUND = '#F4F6F8';
 export function ProfileScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<ProfileNavigation>();
-  const authName = useAuthStore((state) => state.user?.name);
-  const authEmail = useAuthStore((state) => state.user?.email);
+  const authUser = useAuthStore((state) => state.user);
   const logout = useLogout();
 
   const displayName = usePatientProfileStore((state) => state.displayName);
   const avatarUri = usePatientProfileStore((state) => state.avatarUri);
-  const hydrateFromAuthName = usePatientProfileStore((state) => state.hydrateFromAuthName);
+  const hydrateFromAuthUser = usePatientProfileStore((state) => state.hydrateFromAuthUser);
   const setDisplayName = usePatientProfileStore((state) => state.setDisplayName);
   const setAvatarUri = usePatientProfileStore((state) => state.setAvatarUri);
+  const clearProfile = usePatientProfileStore((state) => state.clear);
 
   const bookings = useMemo(() => getBookingHistory(), []);
 
   useEffect(() => {
-    void hydrateFromAuthName(authName);
-  }, [authName, hydrateFromAuthName]);
+    void hydrateFromAuthUser(
+      authUser ? { id: authUser.id, name: authUser.name } : null,
+    );
+  }, [authUser, hydrateFromAuthUser]);
 
   const handleChangePhoto = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -75,11 +77,12 @@ export function ProfileScreen() {
         text: t('common.logout'),
         style: 'destructive',
         onPress: () => {
+          clearProfile();
           logout.mutate();
         },
       },
     ]);
-  }, [logout, t]);
+  }, [clearProfile, logout, t]);
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
@@ -87,8 +90,8 @@ export function ProfileScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <PatientProfileIdentity
-          displayName={displayName}
-          email={authEmail}
+          displayName={displayName || authUser?.name || ''}
+          email={authUser?.email}
           avatarUri={avatarUri}
           onChangePhoto={() => void handleChangePhoto()}
           onSaveName={(name) => {

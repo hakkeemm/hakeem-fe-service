@@ -81,7 +81,11 @@ export function PatientStackNavigator() {
         component={BookingHistoryScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="SlotPicker" component={SlotPickerScreen} />
+      <Stack.Screen
+        name="SlotPicker"
+        component={SlotPickerScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
       <Stack.Screen name="BookingSuccess" component={BookingSuccessScreen} />

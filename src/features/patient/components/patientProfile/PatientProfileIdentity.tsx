@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button } from '../../../../shared/components/Button';
+import { getInitials } from '../../../../shared/components/homeHeader';
 import { useRTL } from '../../../../shared/hooks/useRTL';
 import { colors } from '../../../../shared/theme/colors';
 import { spacing } from '../../../../shared/theme/spacing';
@@ -12,7 +13,7 @@ import { typography } from '../../../../shared/theme/typography';
 export interface PatientProfileIdentityProps {
   displayName: string;
   email?: string;
-  avatarUri: string;
+  avatarUri?: string | null;
   onChangePhoto: () => void;
   onSaveName: (name: string) => void;
 }
@@ -28,6 +29,8 @@ export function PatientProfileIdentity({
   const { isRTL } = useRTL();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(displayName);
+  const hasPhoto = Boolean(avatarUri?.trim());
+  const label = displayName || t('patient.profile');
 
   const openEditor = () => {
     setDraft(displayName);
@@ -50,11 +53,13 @@ export function PatientProfileIdentity({
         accessibilityLabel={t('patient.changePhoto')}
         style={styles.avatarWrap}
       >
-        <Image
-          source={{ uri: avatarUri }}
-          style={styles.avatar}
-          accessibilityLabel={displayName || t('patient.profile')}
-        />
+        {hasPhoto ? (
+          <Image source={{ uri: avatarUri! }} style={styles.avatar} accessibilityLabel={label} />
+        ) : (
+          <View style={[styles.avatar, styles.avatarFallback]} accessibilityLabel={label}>
+            <Text style={styles.avatarInitials}>{getInitials(label)}</Text>
+          </View>
+        )}
         <View style={styles.cameraBadge}>
           <Ionicons name="camera" size={14} color={colors.surface} />
         </View>
@@ -62,7 +67,7 @@ export function PatientProfileIdentity({
 
       <View style={[styles.nameRow, isRTL && styles.rowReverse]}>
         <Text style={styles.name} numberOfLines={1}>
-          {displayName || t('patient.profile')}
+          {label}
         </Text>
         <Pressable
           onPress={openEditor}
@@ -120,6 +125,16 @@ const styles = StyleSheet.create({
     height: 96,
     borderRadius: 48,
     backgroundColor: colors.primaryLight,
+  },
+  avatarFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitials: {
+    ...typography.title,
+    fontSize: 28,
+    color: colors.primaryDark,
+    fontWeight: '700',
   },
   cameraBadge: {
     position: 'absolute',

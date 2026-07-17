@@ -84,9 +84,7 @@ export function ExpandableSearchPanel({
         style={[styles.input, isRTL ? styles.inputRtl : styles.inputLtr]}
         onBlur={(event) => {
           inputProps.onBlur?.(event);
-          if (!String(inputProps.value ?? '').trim()) {
-            onExpandedChange(false);
-          }
+          onExpandedChange(false);
         }}
       />
       {filter ? (

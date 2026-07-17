@@ -58,10 +58,7 @@ export function DoctorProfileScreen() {
         <DoctorProfileLocation doctor={doctor} />
       </ScrollView>
 
-      <DoctorProfileBookingBar
-        fee={doctor.fee}
-        onBookPress={() => navigation.navigate('SlotPicker')}
-      />
+      <DoctorProfileBookingBar onBookPress={() => navigation.navigate('SlotPicker')} />
     </SafeAreaView>
   );
 }

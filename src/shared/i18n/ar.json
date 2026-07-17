@@ -110,6 +110,8 @@
     "popularDoctors": "الأطباء الأكثر شيوعاً",
     "fees": "الرسوم",
     "bookNow": "احجز الآن",
+    "slotPicker": "حجز موعد",
+    "slotPickerEmpty": "اختر التاريخ والوقت للمتابعة.",
     "allDoctors": "كل الأطباء",
     "healthEntryTitle": "اعتنِ بصحتك",
     "healthEntryMessage": "تساعدك الفحوصات المنتظمة على الاطمئنان واكتشاف المشكلات الصحية مبكراً.",

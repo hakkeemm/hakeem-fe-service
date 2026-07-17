@@ -110,6 +110,8 @@
     "popularDoctors": "Popular Doctors",
     "fees": "Fees",
     "bookNow": "Book Now",
+    "slotPicker": "Book appointment",
+    "slotPickerEmpty": "Select a date and time to continue.",
     "allDoctors": "All Doctors",
     "healthEntryTitle": "Take care of your health",
     "healthEntryMessage": "Regular checkups help you stay reassured and catch health concerns early.",

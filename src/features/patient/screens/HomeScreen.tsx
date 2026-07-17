@@ -34,6 +34,7 @@ import { PopularDoctorsSection } from '../components/PopularDoctorsSection';
 import { getMockHomeAdsSlides } from '../data/mockDoctors';
 import type { PatientStackParamList } from '../navigation/PatientStackNavigator';
 import type { PatientTabParamList } from '../navigation/PatientTabNavigator';
+import { usePatientProfileStore } from '../store/patientProfileStore';
 
 type HomeNavigation = CompositeNavigationProp<
   BottomTabNavigationProp<PatientTabParamList, 'Home'>,
@@ -69,12 +70,16 @@ export function HomeScreen() {
   const { isRTL } = useRTL();
   const navigation = useNavigation<HomeNavigation>();
   const user = useAuthStore((state) => state.user);
+  const profileDisplayName = usePatientProfileStore((state) => state.displayName);
+  const avatarUri = usePatientProfileStore((state) => state.avatarUri);
+  const hydrateFromAuthUser = usePatientProfileStore((state) => state.hydrateFromAuthUser);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const greetingOpacity = useRef(new Animated.Value(1)).current;
 
   const greeting = useMemo(() => t(getGreetingKey()), [t]);
-  const displayName = user?.name?.split(' ')[0] || user?.name || t('common.appName');
+  const fullName = (profileDisplayName || user?.name || '').trim() || t('common.appName');
+  const displayName = fullName.split(' ')[0] || fullName;
 
   const adSlides = useMemo(
     () =>
@@ -86,6 +91,10 @@ export function HomeScreen() {
       }),
     [t],
   );
+
+  useEffect(() => {
+    void hydrateFromAuthUser(user ? { id: user.id, name: user.name } : null);
+  }, [hydrateFromAuthUser, user]);
 
   useEffect(() => {
     Animated.timing(greetingOpacity, {
@@ -115,6 +124,7 @@ export function HomeScreen() {
                 <UserGreeting
                   name={displayName}
                   greeting={greeting}
+                  avatarUri={avatarUri || null}
                   tone="onPrimary"
                   onPress={() => navigation.navigate('Profile')}
                 />
