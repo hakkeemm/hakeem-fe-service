@@ -13,5 +13,7 @@ export { DoctorProfileAbout } from './DoctorProfileAbout';
 export type { DoctorProfileAboutProps } from './DoctorProfileAbout';
 export { DoctorProfileLocation } from './DoctorProfileLocation';
 export type { DoctorProfileLocationProps } from './DoctorProfileLocation';
+export { DoctorProfileAvailability } from './DoctorProfileAvailability';
+export type { DoctorProfileAvailabilityProps } from './DoctorProfileAvailability';
 export { DoctorProfileBookingBar } from './DoctorProfileBookingBar';
 export type { DoctorProfileBookingBarProps } from './DoctorProfileBookingBar';

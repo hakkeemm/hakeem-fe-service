@@ -11,6 +11,7 @@ import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import {
   DoctorProfileAbout,
+  DoctorProfileAvailability,
   DoctorProfileBookingBar,
   DoctorProfileHero,
   DoctorProfileIdentity,
@@ -54,11 +55,14 @@ export function DoctorProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <DoctorProfileIdentity doctor={doctor} />
         <DoctorProfileStats doctor={doctor} />
+        <DoctorProfileAvailability doctorId={doctor.id} />
         <DoctorProfileAbout about={doctor.about} />
         <DoctorProfileLocation doctor={doctor} />
       </ScrollView>
 
-      <DoctorProfileBookingBar onBookPress={() => navigation.navigate('SlotPicker')} />
+      <DoctorProfileBookingBar
+        onBookPress={() => navigation.navigate('SlotPicker', { doctorId: doctor.id })}
+      />
     </SafeAreaView>
   );
 }

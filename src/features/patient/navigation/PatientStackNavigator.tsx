@@ -30,8 +30,16 @@ export type PatientStackParamList = {
   ChangePassword: undefined;
   ProfileLanguage: undefined;
   BookingHistory: undefined;
-  SlotPicker: undefined;
-  BookingConfirm: undefined;
+  SlotPicker: { doctorId: string };
+  BookingConfirm: {
+    doctorId: string;
+    date: string;
+    time: string;
+    visitType: 'clinic' | 'online';
+    purpose: 'first' | 'followUp';
+    queuePosition: number;
+    fee: number;
+  };
   Payment: undefined;
   BookingSuccess: undefined;
   AppointmentDetail: undefined;
@@ -86,7 +94,11 @@ export function PatientStackNavigator() {
         component={SlotPickerScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} />
+      <Stack.Screen
+        name="BookingConfirm"
+        component={BookingConfirmScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Payment" component={PaymentScreen} />
       <Stack.Screen name="BookingSuccess" component={BookingSuccessScreen} />
       <Stack.Screen name="AppointmentDetail" component={AppointmentDetailScreen} />
