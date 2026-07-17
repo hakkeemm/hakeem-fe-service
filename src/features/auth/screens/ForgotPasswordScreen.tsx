@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,35 +11,35 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { z } from 'zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { getApiErrorMessage } from '../../../shared/api/errors';
 import { Button } from '../../../shared/components/Button';
 import { FormField } from '../../../shared/components/FormField';
 import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
-import { emailField } from '../hooks/authValidation';
+import { useForgotPassword } from '../hooks/useAuthMutations';
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormValues,
+} from '../hooks/passwordResetSchemas';
 import type { AuthStackParamList } from '../navigation/AuthNavigator';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
-const forgotSchema = z.object({
-  email: emailField,
-});
-
-type ForgotFormValues = z.infer<typeof forgotSchema>;
-
 export function ForgotPasswordScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
+  const forgotPassword = useForgotPassword();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ForgotFormValues>({
-    resolver: zodResolver(forgotSchema),
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { email: '' },
@@ -47,8 +47,15 @@ export function ForgotPasswordScreen({ navigation }: Props) {
 
   const textAlign = isRTL ? 'right' : 'left';
 
-  const onSubmit = handleSubmit(() => {
-    navigation.navigate('ResetPassword');
+  const onSubmit = handleSubmit(async (values) => {
+    setSubmitError(null);
+    const email = values.email.trim();
+    try {
+      await forgotPassword.mutateAsync({ email });
+      navigation.navigate('ResetPassword', { email });
+    } catch (error) {
+      setSubmitError(getApiErrorMessage(error, t('common.error')));
+    }
   });
 
   return (
@@ -83,11 +90,18 @@ export function ForgotPasswordScreen({ navigation }: Props) {
               }
             />
 
-            <Button label={t('auth.sendResetLink')} onPress={() => void onSubmit()} />
+            {submitError ? <Text style={styles.submitError}>{submitError}</Text> : null}
+
+            <Button
+              label={t('auth.sendResetCode')}
+              onPress={() => void onSubmit()}
+              loading={forgotPassword.isPending}
+            />
             <Button
               label={t('common.cancel')}
               variant="ghost"
               onPress={() => navigation.goBack()}
+              disabled={forgotPassword.isPending}
             />
           </View>
         </ScrollView>
@@ -128,5 +142,9 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
     lineHeight: 22,
+  },
+  submitError: {
+    ...typography.bodySmall,
+    color: colors.error,
   },
 });

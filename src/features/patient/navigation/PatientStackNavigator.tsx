@@ -4,12 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AppointmentDetailScreen } from '../screens/AppointmentDetailScreen';
 import { BookingConfirmScreen } from '../screens/BookingConfirmScreen';
+import { BookingHistoryScreen } from '../screens/BookingHistoryScreen';
 import { BookingSuccessScreen } from '../screens/BookingSuccessScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { DoctorProfileScreen } from '../screens/DoctorProfileScreen';
 import { FilterScreen } from '../screens/FilterScreen';
 import { FindYourDoctorScreen } from '../screens/FindYourDoctorScreen';
 import { NotificationsCenterScreen } from '../screens/NotificationsCenterScreen';
 import { PaymentScreen } from '../screens/PaymentScreen';
+import { ProfileLanguageScreen } from '../screens/ProfileLanguageScreen';
 import { RateReviewScreen } from '../screens/RateReviewScreen';
 import { SearchResultsListScreen } from '../screens/SearchResultsListScreen';
 import { SearchResultsMapScreen } from '../screens/SearchResultsMapScreen';
@@ -24,6 +27,9 @@ export type PatientStackParamList = {
   Filter: undefined;
   Notifications: undefined;
   DoctorProfile: { doctorId: string };
+  ChangePassword: undefined;
+  ProfileLanguage: undefined;
+  BookingHistory: undefined;
   SlotPicker: undefined;
   BookingConfirm: undefined;
   Payment: undefined;
@@ -58,6 +64,21 @@ export function PatientStackNavigator() {
       <Stack.Screen
         name="DoctorProfile"
         component={DoctorProfileScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProfileLanguage"
+        component={ProfileLanguageScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookingHistory"
+        component={BookingHistoryScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen name="SlotPicker" component={SlotPickerScreen} />

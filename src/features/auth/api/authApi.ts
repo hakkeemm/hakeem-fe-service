@@ -1,12 +1,16 @@
 import { apiClient } from '../../../shared/api/client';
 import type {
   AuthResponse,
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
   GoogleLoginRequest,
   LoginRequest,
+  MessageResponse,
   RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
   ResendVerificationRequest,
+  ResetPasswordRequest,
   VerifyEmailRequest,
 } from '../../../shared/types/user';
 import { AUTH_ENDPOINTS } from './authEndpoints';
@@ -64,4 +68,35 @@ export async function logoutRequest(body: RefreshTokenRequest): Promise<void> {
   await apiClient.post(AUTH_ENDPOINTS.logout, {
     refreshToken: body.refreshToken,
   });
+}
+
+/** Backend expects email as a query string: POST /api/auth/forgot-password?email= */
+export async function forgotPasswordRequest(
+  body: ForgotPasswordRequest,
+): Promise<MessageResponse> {
+  const { data } = await apiClient.post<MessageResponse>(AUTH_ENDPOINTS.forgotPassword, null, {
+    params: { email: body.email },
+  });
+  return data;
+}
+
+export async function resetPasswordRequest(
+  body: ResetPasswordRequest,
+): Promise<MessageResponse> {
+  const { data } = await apiClient.post<MessageResponse>(AUTH_ENDPOINTS.resetPassword, {
+    email: body.email,
+    code: body.code,
+    newPassword: body.newPassword,
+  });
+  return data;
+}
+
+export async function changePasswordRequest(
+  body: ChangePasswordRequest,
+): Promise<MessageResponse> {
+  const { data } = await apiClient.post<MessageResponse>(AUTH_ENDPOINTS.changePassword, {
+    currentPassword: body.currentPassword,
+    newPassword: body.newPassword,
+  });
+  return data;
 }

@@ -3,6 +3,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,7 +13,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { getApiErrorMessage } from '../../../shared/api/errors';
 import { Button } from '../../../shared/components/Button';
@@ -21,81 +24,98 @@ import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
-import { useForgotPassword, useResetPassword } from '../hooks/useAuthMutations';
+import { useChangePassword } from '../../auth/hooks/useAuthMutations';
 import {
-  resetPasswordSchema,
-  type ResetPasswordFormValues,
-} from '../hooks/passwordResetSchemas';
-import type { AuthStackParamList } from '../navigation/AuthNavigator';
+  changePasswordSchema,
+  type ChangePasswordFormValues,
+} from '../hooks/changePasswordSchema';
+import type { PatientStackParamList } from '../navigation/PatientStackNavigator';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
+type Navigation = NativeStackNavigationProp<PatientStackParamList, 'ChangePassword'>;
 
-export function ResetPasswordScreen({ navigation, route }: Props) {
+export function ChangePasswordScreen() {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
-  const email = route.params.email;
-  const resetPassword = useResetPassword();
-  const forgotPassword = useForgotPassword();
+  const navigation = useNavigation<Navigation>();
+  const changePassword = useChangePassword();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const form = useForm<ResetPasswordFormValues>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: { code: '', password: '', confirmPassword: '' },
+    defaultValues: { currentPassword: '', password: '', confirmPassword: '' },
   });
   const {
     control,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = form;
 
   useEffect(() => {
     const subscription = form.watch((_value, info) => {
+      if (info.name === 'currentPassword') {
+        clearErrors('currentPassword');
+        setSubmitError(null);
+        return;
+      }
       if (info.name !== 'password') {
         return;
       }
-
       const confirmPassword = form.getValues('confirmPassword');
-      if (confirmPassword.length === 0) {
-        return;
+      if (confirmPassword.length > 0) {
+        void form.trigger('confirmPassword');
       }
-      void form.trigger('confirmPassword');
     });
-
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [clearErrors, form]);
 
   const textAlign = isRTL ? 'right' : 'left';
-  const isBusy = resetPassword.isPending || forgotPassword.isPending;
+  const isBusy = changePassword.isPending;
 
   const onSubmit = handleSubmit(async (values) => {
     setSubmitError(null);
+    clearErrors('currentPassword');
     try {
-      await resetPassword.mutateAsync({
-        email,
-        code: values.code.trim(),
+      await changePassword.mutateAsync({
+        currentPassword: values.currentPassword,
         newPassword: values.password,
       });
-      Alert.alert(t('auth.resetPasswordTitle'), t('auth.resetPasswordSuccess'), [
-        { text: t('common.confirm'), onPress: () => navigation.navigate('Login') },
+      Alert.alert(t('patient.changePassword'), t('patient.passwordChanged'), [
+        { text: t('common.confirm'), onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
-      setSubmitError(getApiErrorMessage(error, t('common.error')));
+      const message = getApiErrorMessage(error, t('common.error'));
+      if (/incorrect password/i.test(message)) {
+        setError('currentPassword', {
+          type: 'server',
+          message: 'patient.incorrectPassword',
+        });
+        return;
+      }
+      setSubmitError(message);
     }
   });
 
-  const onResendCode = async () => {
-    setSubmitError(null);
-    try {
-      await forgotPassword.mutateAsync({ email });
-      Alert.alert(t('auth.forgotPasswordTitle'), t('auth.resetCodeResent'));
-    } catch (error) {
-      setSubmitError(getApiErrorMessage(error, t('common.error')));
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={[styles.nav, isRTL && styles.navRtl]}>
+        <Pressable
+          onPress={() => navigation.goBack()}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.back')}
+          style={styles.backButton}
+          hitSlop={8}
+          disabled={isBusy}
+        >
+          <View style={isRTL ? styles.mirror : undefined}>
+            <Ionicons name="chevron-back" size={22} color={colors.text} />
+          </View>
+        </Pressable>
+        <View style={styles.backSpacer} />
+      </View>
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -107,68 +127,53 @@ export function ResetPasswordScreen({ navigation, route }: Props) {
         >
           <View style={styles.card}>
             <View style={styles.header}>
-              <Text style={[styles.title, { textAlign }]}>{t('auth.resetPasswordTitle')}</Text>
-              <Text style={[styles.subtitle, { textAlign }]}>
-                {t('auth.resetPasswordSubtitle')}
-              </Text>
-              <Text style={[styles.email, { textAlign }]}>{email}</Text>
+              <Text style={[styles.title, { textAlign }]}>{t('patient.changePassword')}</Text>
             </View>
 
             <FormField
               control={control}
-              name="code"
-              placeholder={t('auth.verificationCode')}
+              name="currentPassword"
+              placeholder={t('patient.currentPassword')}
+              isPassword
               leadingIcon="lock"
-              keyboardType="number-pad"
-              autoCapitalize="none"
-              autoCorrect={false}
-              maxLength={6}
               errorMessage={
-                errors.code ? t(errors.code.message ?? 'auth.codeInvalid') : undefined
+                errors.currentPassword?.message
+                  ? t(errors.currentPassword.message)
+                  : undefined
               }
             />
-
             <FormField
               control={control}
               name="password"
               placeholder={t('auth.newPassword')}
-              leadingIcon="lock"
               isPassword
+              leadingIcon="lock"
               errorMessage={
-                errors.password
+                errors.password?.message
                   ? t(errors.password.message ?? 'auth.passwordRegex')
                   : undefined
               }
             />
-
             <FormField
               control={control}
               name="confirmPassword"
               placeholder={t('auth.confirmPassword')}
-              leadingIcon="lock"
               isPassword
+              leadingIcon="lock"
               errorMessage={
-                errors.confirmPassword
-                  ? t(errors.confirmPassword.message ?? 'auth.passwordsMustMatch')
+                errors.confirmPassword?.message
+                  ? t(errors.confirmPassword.message)
                   : undefined
               }
             />
-
             <Text style={[styles.hint, { textAlign }]}>{t('auth.passwordRegex')}</Text>
 
             {submitError ? <Text style={styles.submitError}>{submitError}</Text> : null}
 
             <Button
-              label={t('auth.resetPassword')}
+              label={t('common.save')}
               onPress={() => void onSubmit()}
-              loading={resetPassword.isPending}
-              disabled={isBusy}
-            />
-            <Button
-              label={forgotPassword.isPending ? t('common.loading') : t('auth.resendCode')}
-              variant="ghost"
-              onPress={() => void onResendCode()}
-              disabled={isBusy}
+              loading={isBusy}
             />
             <Button
               label={t('common.cancel')}
@@ -191,6 +196,33 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
+  nav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  navRtl: {
+    flexDirection: 'row-reverse',
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backSpacer: {
+    width: 44,
+    height: 44,
+  },
+  mirror: {
+    transform: [{ scaleX: -1 }],
+  },
   content: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -210,16 +242,6 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     fontWeight: '700',
     color: colors.primary,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-  email: {
-    ...typography.bodySmall,
-    color: colors.text,
-    fontWeight: '600',
   },
   hint: {
     ...typography.caption,

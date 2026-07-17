@@ -13,7 +13,7 @@ export type AuthStackParamList = {
   SignUp: undefined;
   VerifyEmail: { email: string };
   ForgotPassword: undefined;
-  ResetPassword: undefined;
+  ResetPassword: { email: string };
   LanguageSelect: undefined;
 };
 

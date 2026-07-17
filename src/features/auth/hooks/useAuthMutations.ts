@@ -4,11 +4,20 @@ import { buildUserFromAuthResponse } from '../../../shared/api/jwt';
 import { startSignalRConnection, stopSignalRConnection } from '../../../shared/api/signalr';
 import { clearTokens, saveTokens } from '../../../shared/api/tokenStorage';
 import { useAuthStore } from '../../../shared/store/authStore';
-import type { GoogleLoginRequest, VerifyEmailRequest } from '../../../shared/types/user';
+import type {
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
+  GoogleLoginRequest,
+  ResetPasswordRequest,
+  VerifyEmailRequest,
+} from '../../../shared/types/user';
 import {
+  changePasswordRequest,
+  forgotPasswordRequest,
   googleLoginRequest,
   logoutRequest,
   resendVerificationRequest,
+  resetPasswordRequest,
   verifyEmailRequest,
 } from '../api/authApi';
 
@@ -36,6 +45,24 @@ export function useVerifyEmail() {
 export function useResendVerification() {
   return useMutation({
     mutationFn: (email: string) => resendVerificationRequest({ email }),
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordRequest) => forgotPasswordRequest(payload),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (payload: ResetPasswordRequest) => resetPasswordRequest(payload),
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (payload: ChangePasswordRequest) => changePasswordRequest(payload),
   });
 }
 

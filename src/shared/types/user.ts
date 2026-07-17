@@ -64,6 +64,28 @@ export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
+/** Matches backend ForgotPassword (`email` query param). */
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+/** Matches backend ResetPasswordRequestDto */
+export interface ResetPasswordRequest {
+  email: string;
+  code: string;
+  newPassword: string;
+}
+
+/** Matches backend ChangePasswordRequestDto */
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+
 export interface ApiErrorBody {
   error?: string;
   code?: string;
