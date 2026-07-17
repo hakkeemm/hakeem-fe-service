@@ -13,23 +13,42 @@ export interface UserGreetingProps {
   avatarUri?: string | null;
   onPress?: () => void;
   style?: ViewStyle;
+  /** Use light text/avatar treatment on a primary-colored header. */
+  tone?: 'default' | 'onPrimary';
 }
 
-export function UserGreeting({ name, greeting, avatarUri, onPress, style }: UserGreetingProps) {
+export function UserGreeting({
+  name,
+  greeting,
+  avatarUri,
+  onPress,
+  style,
+  tone = 'default',
+}: UserGreetingProps) {
   const { isRTL } = useRTL();
   const displayName = name.trim() || '—';
+  const onPrimary = tone === 'onPrimary';
   const content = (
     <>
-      <View style={styles.avatar}>
+      <View style={[styles.avatar, onPrimary && styles.avatarOnPrimary]}>
         {avatarUri ? (
           <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
         ) : (
-          <Text style={styles.avatarInitials}>{getInitials(displayName)}</Text>
+          <Text style={[styles.avatarInitials, onPrimary && styles.avatarInitialsOnPrimary]}>
+            {getInitials(displayName)}
+          </Text>
         )}
       </View>
       <View style={[styles.textBlock, isRTL && styles.textBlockRtl]}>
-        <Text style={[styles.greeting, isRTL && styles.rtlText]}>{greeting}</Text>
-        <Text style={[styles.name, isRTL && styles.rtlText]} numberOfLines={1}>
+        <Text
+          style={[styles.greeting, onPrimary && styles.greetingOnPrimary, isRTL && styles.rtlText]}
+        >
+          {greeting}
+        </Text>
+        <Text
+          style={[styles.name, onPrimary && styles.nameOnPrimary, isRTL && styles.rtlText]}
+          numberOfLines={1}
+        >
           {displayName} 👋
         </Text>
       </View>
@@ -71,6 +90,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  avatarOnPrimary: {
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.55)',
+  },
   avatarImage: {
     width: '100%',
     height: '100%',
@@ -79,6 +103,9 @@ const styles = StyleSheet.create({
     ...typography.label,
     color: colors.primaryDark,
     fontWeight: '700',
+  },
+  avatarInitialsOnPrimary: {
+    color: colors.background,
   },
   textBlock: {
     flexShrink: 1,
@@ -91,10 +118,16 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.textSecondary,
   },
+  greetingOnPrimary: {
+    color: 'rgba(255,255,255,0.85)',
+  },
   name: {
     ...typography.subtitle,
     color: colors.text,
     fontWeight: '700',
+  },
+  nameOnPrimary: {
+    color: colors.background,
   },
   rtlText: {
     textAlign: 'right',

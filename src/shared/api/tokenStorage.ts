@@ -1,17 +1,15 @@
 import * as SecureStore from 'expo-secure-store';
-import Constants from 'expo-constants';
+import { isRunningInExpoGo } from 'expo';
 
 const ACCESS_TOKEN_KEY = 'hakeem_access_token';
 const REFRESH_TOKEN_KEY = 'hakeem_refresh_token';
 const KEYCHAIN_SERVICE = 'com.hakeem.app.tokens';
 
 /** Expo Go cannot use react-native-keychain; use SecureStore there. */
-const isExpoGo = Constants.appOwnership === 'expo';
-
 type KeychainModule = typeof import('react-native-keychain');
 
 function loadKeychain(): KeychainModule | null {
-  if (isExpoGo) {
+  if (isRunningInExpoGo()) {
     return null;
   }
 

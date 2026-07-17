@@ -8,7 +8,7 @@ import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
 import type { MockDoctor } from '../data/mockDoctors';
 
-const AVATAR_SIZE = 56;
+const AVATAR_SIZE = 60;
 const STAR_COLOR = '#F5C518';
 
 function StarIcon({ color }: { color: string }) {
@@ -24,27 +24,16 @@ function StarIcon({ color }: { color: string }) {
 
 export interface DoctorCardProps {
   doctor: MockDoctor;
-  feesLabel: string;
   bookLabel: string;
   onPress?: (doctor: MockDoctor) => void;
   onBookPress?: (doctor: MockDoctor) => void;
-}
-
-function formatFee(fee: number): string {
-  return fee.toFixed(2);
 }
 
 function formatReviews(count: number): string {
   return count.toLocaleString();
 }
 
-export function DoctorCard({
-  doctor,
-  feesLabel,
-  bookLabel,
-  onPress,
-  onBookPress,
-}: DoctorCardProps) {
+export function DoctorCard({ doctor, bookLabel, onPress, onBookPress }: DoctorCardProps) {
   const { isRTL } = useRTL();
 
   return (
@@ -71,19 +60,14 @@ export function DoctorCard({
         </View>
       </View>
 
-      <View style={[styles.right, isRTL && styles.rightRtl]}>
-        <Text style={[styles.fees, isRTL && styles.rtlText]}>
-          {feesLabel}: ${formatFee(doctor.fee)}
-        </Text>
-        <Pressable
-          onPress={() => onBookPress?.(doctor)}
-          accessibilityRole="button"
-          accessibilityLabel={bookLabel}
-          style={({ pressed }) => [styles.bookButton, pressed && styles.bookButtonPressed]}
-        >
-          <Text style={styles.bookLabel}>{bookLabel}</Text>
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => onBookPress?.(doctor)}
+        accessibilityRole="button"
+        accessibilityLabel={bookLabel}
+        style={({ pressed }) => [styles.bookButton, pressed && styles.bookButtonPressed]}
+      >
+        <Text style={styles.bookLabel}>{bookLabel}</Text>
+      </Pressable>
     </Pressable>
   );
 }
@@ -95,8 +79,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
   },
   cardRtl: {
     flexDirection: 'row-reverse',
@@ -110,7 +94,7 @@ const styles = StyleSheet.create({
   middle: {
     flex: 1,
     minWidth: 0,
-    gap: 2,
+    gap: spacing.xs,
   },
   name: {
     ...typography.label,
@@ -126,7 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
   ratingRowRtl: {
     flexDirection: 'row-reverse',
@@ -137,23 +121,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '500',
   },
-  right: {
-    alignItems: 'flex-end',
-    gap: spacing.sm,
-    flexShrink: 0,
-  },
-  rightRtl: {
-    alignItems: 'flex-start',
-  },
-  fees: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
   bookButton: {
     backgroundColor: colors.primary,
     borderRadius: 10,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
+    flexShrink: 0,
   },
   bookButtonPressed: {
     opacity: 0.88,

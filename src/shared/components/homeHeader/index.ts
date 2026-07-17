@@ -1,3 +1,5 @@
+export { CurvedHeaderBackground } from './CurvedHeaderBackground';
+export type { CurvedHeaderBackgroundProps } from './CurvedHeaderBackground';
 export { UserGreeting } from './UserGreeting';
 export type { UserGreetingProps } from './UserGreeting';
 export { NotificationButton } from './NotificationButton';

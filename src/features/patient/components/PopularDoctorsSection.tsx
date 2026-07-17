@@ -63,7 +63,6 @@ export function PopularDoctorsSection({
           <DoctorCard
             key={doctor.id}
             doctor={doctor}
-            feesLabel={t('patient.fees')}
             bookLabel={t('patient.bookNow')}
             onPress={onDoctorPress}
             onBookPress={onBookPress}
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: -1 }],
   },
   list: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   rtlText: {
     writingDirection: 'rtl',

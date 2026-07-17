@@ -10,6 +10,7 @@ export interface NotificationButtonProps {
   hasUnread?: boolean;
   accessibilityLabel?: string;
   style?: ViewStyle;
+  tone?: 'default' | 'onPrimary';
 }
 
 function BellIcon({ color }: { color: string }) {
@@ -40,17 +41,26 @@ export function NotificationButton({
   hasUnread = false,
   accessibilityLabel = 'Notifications',
   style,
+  tone = 'default',
 }: NotificationButtonProps) {
+  const onPrimary = tone === 'onPrimary';
+  const iconColor = onPrimary ? colors.background : colors.text;
+
   return (
     <Pressable
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
+      style={({ pressed }) => [
+        styles.button,
+        onPrimary && styles.buttonOnPrimary,
+        pressed && styles.pressed,
+        style,
+      ]}
     >
-      <BellIcon color={colors.text} />
-      {hasUnread ? <View style={styles.dot} /> : null}
+      <BellIcon color={iconColor} />
+      {hasUnread ? <View style={[styles.dot, onPrimary && styles.dotOnPrimary]} /> : null}
     </Pressable>
   );
 }
@@ -66,6 +76,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  buttonOnPrimary: {
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderColor: 'rgba(255,255,255,0.35)',
+  },
   pressed: {
     opacity: 0.85,
   },
@@ -79,5 +93,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.error,
     borderWidth: 1.5,
     borderColor: homeHeaderColors.surface,
+  },
+  dotOnPrimary: {
+    borderColor: colors.primary,
   },
 });

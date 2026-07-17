@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { AdsSlider } from '../../../shared/components/ads';
 import {
+  CurvedHeaderBackground,
   ExpandableSearchPanel,
   NotificationButton,
   UserGreeting,
@@ -26,6 +27,7 @@ import {
 } from '../../../shared/components/homeHeader';
 import { useRTL } from '../../../shared/hooks/useRTL';
 import { useAuthStore } from '../../../shared/store/authStore';
+import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { DoctorCategoriesSection } from '../components/DoctorCategoriesSection';
 import { PopularDoctorsSection } from '../components/PopularDoctorsSection';
@@ -100,68 +102,75 @@ export function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.topRow, isRTL && styles.topRowRtl]}>
-          {!isSearchExpanded ? (
-            <Animated.View style={[styles.greetingWrap, { opacity: greetingOpacity }]}>
-              <UserGreeting
-                name={displayName}
-                greeting={greeting}
-                onPress={() => navigation.navigate('Profile')}
+        <CurvedHeaderBackground color={colors.primary}>
+          <View style={[styles.topRow, isRTL && styles.topRowRtl]}>
+            {!isSearchExpanded ? (
+              <Animated.View style={[styles.greetingWrap, { opacity: greetingOpacity }]}>
+                <UserGreeting
+                  name={displayName}
+                  greeting={greeting}
+                  tone="onPrimary"
+                  onPress={() => navigation.navigate('Profile')}
+                />
+              </Animated.View>
+            ) : null}
+
+            <View
+              style={[
+                styles.actions,
+                isRTL && styles.actionsRtl,
+                isSearchExpanded && styles.actionsExpanded,
+              ]}
+            >
+              <ExpandableSearchPanel
+                expanded={isSearchExpanded}
+                onExpandedChange={setSearchExpanded}
+                tone="onPrimary"
+                accessibilityLabel={t('patient.search')}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder={t('patient.searchDoctors')}
+                returnKeyType="search"
+                onSubmitEditing={() => navigation.navigate('Search')}
+                filter={{
+                  accessibilityLabel: t('common.filter'),
+                  onPress: () => navigation.navigate('Filter'),
+                }}
               />
-            </Animated.View>
-          ) : null}
-
-          <View
-            style={[
-              styles.actions,
-              isRTL && styles.actionsRtl,
-              isSearchExpanded && styles.actionsExpanded,
-            ]}
-          >
-            <ExpandableSearchPanel
-              expanded={isSearchExpanded}
-              onExpandedChange={setSearchExpanded}
-              accessibilityLabel={t('patient.search')}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder={t('patient.searchDoctors')}
-              returnKeyType="search"
-              onSubmitEditing={() => navigation.navigate('Search')}
-              filter={{
-                accessibilityLabel: t('common.filter'),
-                onPress: () => navigation.navigate('Filter'),
-              }}
-            />
-            <NotificationButton
-              hasUnread
-              accessibilityLabel={t('common.notifications')}
-              onPress={() => navigation.navigate('Notifications')}
-            />
+              <NotificationButton
+                hasUnread
+                tone="onPrimary"
+                accessibilityLabel={t('common.notifications')}
+                onPress={() => navigation.navigate('Notifications')}
+              />
+            </View>
           </View>
+        </CurvedHeaderBackground>
+
+        <View style={styles.body}>
+          <AdsSlider
+            slides={adSlides}
+            connectLabel={t('patient.connect')}
+            onConnect={() => navigation.navigate('Search')}
+          />
+
+          <DoctorCategoriesSection
+            onSeeAllPress={() => navigation.navigate('FindYourDoctor')}
+            onCategoryPress={() => navigation.navigate('Search')}
+          />
+
+          <PopularDoctorsSection
+            onSeeAllPress={() => navigation.navigate('Search')}
+            onDoctorPress={() => navigation.navigate('DoctorProfile')}
+            onBookPress={() => navigation.navigate('DoctorProfile')}
+          />
         </View>
-
-        <AdsSlider
-          slides={adSlides}
-          connectLabel={t('patient.connect')}
-          onConnect={() => navigation.navigate('Search')}
-        />
-
-        <DoctorCategoriesSection
-          onSeeAllPress={() => navigation.navigate('FindYourDoctor')}
-          onCategoryPress={() => navigation.navigate('Search')}
-        />
-
-        <PopularDoctorsSection
-          onSeeAllPress={() => navigation.navigate('Search')}
-          onDoctorPress={() => navigation.navigate('DoctorProfile')}
-          onBookPress={() => navigation.navigate('DoctorProfile')}
-        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -172,11 +181,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: homeHeaderColors.background,
   },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
+  scrollContent: {
     // Extra space so the last cards clear the floating center FAB
     paddingBottom: spacing.xxl + 32,
+  },
+  body: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
     gap: spacing.md,
   },
   topRow: {

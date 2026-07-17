@@ -30,6 +30,7 @@ export interface ExpandableSearchPanelProps extends Omit<TextInputProps, 'style'
   filter?: FilterButtonProps;
   accessibilityLabel?: string;
   containerStyle?: ViewStyle;
+  tone?: 'default' | 'onPrimary';
 }
 
 /**
@@ -43,6 +44,7 @@ export function ExpandableSearchPanel({
   filter,
   accessibilityLabel = 'Search',
   containerStyle,
+  tone = 'default',
   ...inputProps
 }: ExpandableSearchPanelProps) {
   const { isRTL } = useRTL();
@@ -66,6 +68,7 @@ export function ExpandableSearchPanel({
         <SearchButton
           accessibilityLabel={accessibilityLabel}
           onPress={() => onExpandedChange(true)}
+          tone={tone}
         />
       </View>
     );

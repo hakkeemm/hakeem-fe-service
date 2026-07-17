@@ -130,17 +130,6 @@ export function AdsSlider({
           });
         }}
       />
-
-      {slides.length > 1 ? (
-        <View style={styles.dots}>
-          {slides.map((slide, index) => (
-            <View
-              key={slide.id}
-              style={[styles.dot, index === activeIndex && styles.dotActive]}
-            />
-          ))}
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -148,26 +137,8 @@ export function AdsSlider({
 export { ADS_CARD_HEIGHT };
 
 const styles = StyleSheet.create({
-  wrap: {
-    gap: spacing.sm,
-  },
+  wrap: {},
   cardSpacing: {
     marginEnd: spacing.md,
-  },
-  dots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-  },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#C9D1D6',
-  },
-  dotActive: {
-    width: 18,
-    backgroundColor: '#148F8A',
   },
 });

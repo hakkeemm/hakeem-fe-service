@@ -10,6 +10,7 @@ export interface SearchButtonProps {
   active?: boolean;
   accessibilityLabel?: string;
   style?: ViewStyle;
+  tone?: 'default' | 'onPrimary';
 }
 
 export function SearchButton({
@@ -17,7 +18,11 @@ export function SearchButton({
   active = false,
   accessibilityLabel = 'Search',
   style,
+  tone = 'default',
 }: SearchButtonProps) {
+  const onPrimary = tone === 'onPrimary';
+  const iconColor = onPrimary || active ? (onPrimary ? colors.background : colors.primary) : colors.text;
+
   return (
     <Pressable
       onPress={onPress}
@@ -28,11 +33,12 @@ export function SearchButton({
       style={({ pressed }) => [
         styles.button,
         active && styles.active,
+        onPrimary && styles.buttonOnPrimary,
         pressed && styles.pressed,
         style,
       ]}
     >
-      <HeaderSearchIcon color={active ? colors.primary : colors.text} />
+      <HeaderSearchIcon color={iconColor} />
     </Pressable>
   );
 }
@@ -47,6 +53,10 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonOnPrimary: {
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderColor: 'rgba(255,255,255,0.35)',
   },
   active: {
     backgroundColor: colors.primaryLight,
