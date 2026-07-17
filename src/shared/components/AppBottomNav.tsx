@@ -114,7 +114,7 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
         onLongPress={onLongPress}
         style={styles.tab}
       >
-        <BottomNavIcon name={icon} color={color} filled={isFocused && icon === 'home'} />
+        <BottomNavIcon name={icon} color={color} active={isFocused} />
         <Text style={[styles.label, { color }]} numberOfLines={1}>
           {label}
         </Text>
