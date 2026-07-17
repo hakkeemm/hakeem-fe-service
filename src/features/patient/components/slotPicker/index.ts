@@ -4,5 +4,7 @@ export { SlotDayAssignment } from './SlotDayAssignment';
 export type { SlotDayAssignmentProps } from './SlotDayAssignment';
 export { SlotBookTypeSection } from './SlotBookTypeSection';
 export type { SlotBookTypeSectionProps } from './SlotBookTypeSection';
+export { SlotPatientDetailsSection } from './SlotPatientDetailsSection';
+export type { SlotPatientDetailsSectionProps } from './SlotPatientDetailsSection';
 export { SlotBookingBar } from './SlotBookingBar';
 export type { SlotBookingBarProps } from './SlotBookingBar';

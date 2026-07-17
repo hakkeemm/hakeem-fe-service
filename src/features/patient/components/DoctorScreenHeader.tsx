@@ -1,50 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  LayoutAnimation,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  UIManager,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   CURVE_DEPTH,
   CurvedHeaderBackground,
-  ExpandableSearchPanel,
+  FilterButton,
+  SearchBar,
 } from '../../../shared/components/homeHeader';
 import { useRTL } from '../../../shared/hooks/useRTL';
 import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { typography } from '../../../shared/theme/typography';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-const ANIMATION_MS = 300;
 /** Vertical padding inside curved header content (top + bottom). */
 const CONTENT_VERTICAL_PADDING = spacing.md + spacing.lg;
-
-function configureHeaderAnimation() {
-  LayoutAnimation.configureNext({
-    duration: ANIMATION_MS,
-    create: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-    update: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-    },
-    delete: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-  });
-}
 
 export interface DoctorHeaderHeights {
   max: number;
@@ -67,8 +38,6 @@ export interface DoctorScreenHeaderProps {
   searchPlaceholder: string;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
-  isSearchExpanded: boolean;
-  onSearchExpandedChange: (expanded: boolean) => void;
 }
 
 export function DoctorScreenHeader({
@@ -85,20 +54,15 @@ export function DoctorScreenHeader({
   searchPlaceholder,
   searchQuery,
   onSearchQueryChange,
-  isSearchExpanded,
-  onSearchExpandedChange,
 }: DoctorScreenHeaderProps) {
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
-  const [stickyHeight, setStickyHeight] = useState(0);
+  const [titleRowHeight, setTitleRowHeight] = useState(0);
+  const [searchRowHeight, setSearchRowHeight] = useState(0);
   const [encouragementFullHeight, setEncouragementFullHeight] = useState(0);
   const reportedKey = useRef('');
 
-  const setSearchExpanded = (expanded: boolean) => {
-    configureHeaderAnimation();
-    onSearchExpandedChange(expanded);
-  };
-
+  const stickyHeight = titleRowHeight + searchRowHeight;
   const collapseDistance = encouragementFullHeight;
   const visibleEncouragementHeight = Math.max(
     0,
@@ -137,8 +101,8 @@ export function DoctorScreenHeader({
           style={[styles.topRow, isRTL && styles.topRowRtl]}
           onLayout={(event) => {
             const next = event.nativeEvent.layout.height;
-            if (next > 0 && Math.abs(next - stickyHeight) > 1) {
-              setStickyHeight(next);
+            if (next > 0 && Math.abs(next - titleRowHeight) > 1) {
+              setTitleRowHeight(next);
             }
           }}
         >
@@ -158,24 +122,9 @@ export function DoctorScreenHeader({
             <View style={styles.iconSpacer} />
           )}
 
-          {!isSearchExpanded ? <Text style={styles.title}>{title}</Text> : null}
+          <Text style={styles.title}>{title}</Text>
 
-          <View style={[styles.searchWrap, isSearchExpanded && styles.searchWrapExpanded]}>
-            <ExpandableSearchPanel
-              expanded={isSearchExpanded}
-              onExpandedChange={setSearchExpanded}
-              tone="onPrimary"
-              accessibilityLabel={searchAccessibilityLabel}
-              value={searchQuery}
-              onChangeText={onSearchQueryChange}
-              placeholder={searchPlaceholder}
-              returnKeyType="search"
-              filter={{
-                accessibilityLabel: filterAccessibilityLabel,
-                onPress: onFilterPress,
-              }}
-            />
-          </View>
+          <View style={styles.iconSpacer} />
         </View>
 
         <View
@@ -206,6 +155,32 @@ export function DoctorScreenHeader({
             </Text>
           </View>
         </View>
+
+        <View
+          style={styles.searchRow}
+          onLayout={(event) => {
+            const next = event.nativeEvent.layout.height;
+            if (next > 0 && Math.abs(next - searchRowHeight) > 1) {
+              setSearchRowHeight(next);
+            }
+          }}
+        >
+          <SearchBar
+            accessibilityLabel={searchAccessibilityLabel}
+            value={searchQuery}
+            onChangeText={onSearchQueryChange}
+            placeholder={searchPlaceholder}
+            returnKeyType="search"
+            endAdornment={
+              onFilterPress ? (
+                <FilterButton
+                  accessibilityLabel={filterAccessibilityLabel}
+                  onPress={onFilterPress}
+                />
+              ) : undefined
+            }
+          />
+        </View>
       </CurvedHeaderBackground>
     </View>
   );
@@ -235,12 +210,8 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  searchWrap: {
-    flexShrink: 0,
-  },
-  searchWrapExpanded: {
-    flex: 1,
-    minWidth: 0,
+  searchRow: {
+    marginTop: spacing.md,
   },
   iconButton: {
     width: 44,

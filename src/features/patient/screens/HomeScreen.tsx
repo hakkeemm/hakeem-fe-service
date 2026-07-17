@@ -1,14 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Easing,
-  LayoutAnimation,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  UIManager,
-  View,
-} from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -19,7 +10,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AdsSlider } from '../../../shared/components/ads';
 import {
   CurvedHeaderBackground,
-  ExpandableSearchPanel,
   NotificationButton,
   UserGreeting,
   getGreetingKey,
@@ -41,30 +31,6 @@ type HomeNavigation = CompositeNavigationProp<
   NativeStackNavigationProp<PatientStackParamList>
 >;
 
-const ACTION_GAP = spacing.sm;
-const ANIMATION_MS = 300;
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-function configureHeaderAnimation() {
-  LayoutAnimation.configureNext({
-    duration: ANIMATION_MS,
-    create: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-    update: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-    },
-    delete: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-  });
-}
-
 export function HomeScreen() {
   const { t } = useTranslation();
   const { isRTL } = useRTL();
@@ -73,9 +39,6 @@ export function HomeScreen() {
   const profileDisplayName = usePatientProfileStore((state) => state.displayName);
   const avatarUri = usePatientProfileStore((state) => state.avatarUri);
   const hydrateFromAuthUser = usePatientProfileStore((state) => state.hydrateFromAuthUser);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const greetingOpacity = useRef(new Animated.Value(1)).current;
 
   const greeting = useMemo(() => t(getGreetingKey()), [t]);
   const fullName = (profileDisplayName || user?.name || '').trim() || t('common.appName');
@@ -96,20 +59,6 @@ export function HomeScreen() {
     void hydrateFromAuthUser(user ? { id: user.id, name: user.name } : null);
   }, [hydrateFromAuthUser, user]);
 
-  useEffect(() => {
-    Animated.timing(greetingOpacity, {
-      toValue: isSearchExpanded ? 0 : 1,
-      duration: ANIMATION_MS * 0.7,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [greetingOpacity, isSearchExpanded]);
-
-  const setSearchExpanded = (expanded: boolean) => {
-    configureHeaderAnimation();
-    setIsSearchExpanded(expanded);
-  };
-
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView
@@ -119,47 +68,22 @@ export function HomeScreen() {
       >
         <CurvedHeaderBackground color={colors.primary}>
           <View style={[styles.topRow, isRTL && styles.topRowRtl]}>
-            {!isSearchExpanded ? (
-              <Animated.View style={[styles.greetingWrap, { opacity: greetingOpacity }]}>
-                <UserGreeting
-                  name={displayName}
-                  greeting={greeting}
-                  avatarUri={avatarUri || null}
-                  tone="onPrimary"
-                  onPress={() => navigation.navigate('Profile')}
-                />
-              </Animated.View>
-            ) : null}
-
-            <View
-              style={[
-                styles.actions,
-                isRTL && styles.actionsRtl,
-                isSearchExpanded && styles.actionsExpanded,
-              ]}
-            >
-              <ExpandableSearchPanel
-                expanded={isSearchExpanded}
-                onExpandedChange={setSearchExpanded}
+            <View style={styles.greetingWrap}>
+              <UserGreeting
+                name={displayName}
+                greeting={greeting}
+                avatarUri={avatarUri || null}
                 tone="onPrimary"
-                accessibilityLabel={t('patient.search')}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder={t('patient.searchDoctors')}
-                returnKeyType="search"
-                onSubmitEditing={() => navigation.navigate('Search')}
-                filter={{
-                  accessibilityLabel: t('common.filter'),
-                  onPress: () => navigation.navigate('Filter'),
-                }}
-              />
-              <NotificationButton
-                hasUnread
-                tone="onPrimary"
-                accessibilityLabel={t('common.notifications')}
-                onPress={() => navigation.navigate('Notifications')}
+                onPress={() => navigation.navigate('Profile')}
               />
             </View>
+
+            <NotificationButton
+              hasUnread
+              tone="onPrimary"
+              accessibilityLabel={t('common.notifications')}
+              onPress={() => navigation.navigate('Notifications')}
+            />
           </View>
         </CurvedHeaderBackground>
 
@@ -213,19 +137,5 @@ const styles = StyleSheet.create({
   greetingWrap: {
     flex: 1,
     minWidth: 0,
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: ACTION_GAP,
-    flexShrink: 0,
-  },
-  actionsExpanded: {
-    flex: 1,
-    flexShrink: 1,
-    minWidth: 0,
-  },
-  actionsRtl: {
-    flexDirection: 'row-reverse',
   },
 });

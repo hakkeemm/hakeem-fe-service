@@ -1,5 +1,6 @@
 import type { AdsSlide } from '../../../shared/components/ads';
 import type { SpecialtyId } from './mockCategories';
+import type { CityId } from './mockCities';
 
 /** Remote mock doctor photos. */
 export const MOCK_DOCTOR_IMAGES = {
@@ -21,6 +22,7 @@ export type MockDoctor = {
   specialty: string;
   hospital: string;
   specialtyId: SpecialtyId;
+  cityId: CityId;
   imageUrl: string;
   rating: number;
   reviewCount: number;
@@ -45,6 +47,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Cardiologist',
     hospital: 'Siloam Hospital',
     specialtyId: 'cardiology',
+    cityId: 'cairo',
     imageUrl: MOCK_DOCTOR_IMAGES.maleDoctor,
     rating: 4.9,
     reviewCount: 174,
@@ -62,6 +65,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Internal Medicine',
     hospital: 'Stanford Hospital',
     specialtyId: 'pathology',
+    cityId: 'giza',
     imageUrl: MOCK_DOCTOR_IMAGES.maleGlasses,
     rating: 4.5,
     reviewCount: 83,
@@ -78,6 +82,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Dermatologist',
     hospital: 'Methodist Hospital',
     specialtyId: 'dermatology',
+    cityId: 'alexandria',
     imageUrl: MOCK_DOCTOR_IMAGES.femaleDoctor,
     rating: 4.9,
     reviewCount: 224,
@@ -95,6 +100,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Dermatologist',
     hospital: 'Methodist Hospital',
     specialtyId: 'dermatology',
+    cityId: 'cairo',
     imageUrl: MOCK_DOCTOR_IMAGES.femaleSmile,
     rating: 4.9,
     reviewCount: 224,
@@ -111,6 +117,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Cardiology',
     hospital: 'City Medical Center',
     specialtyId: 'cardiology',
+    cityId: 'dakahlia',
     imageUrl: MOCK_DOCTOR_IMAGES.maleCoat,
     rating: 4.8,
     reviewCount: 1842,
@@ -128,6 +135,7 @@ export const MOCK_DOCTORS: MockDoctor[] = [
     specialty: 'Pediatrics',
     hospital: 'Children Wellness Clinic',
     specialtyId: 'pediatrics',
+    cityId: 'sharqia',
     imageUrl: MOCK_DOCTOR_IMAGES.clinicTeam,
     rating: 4.9,
     reviewCount: 3120,

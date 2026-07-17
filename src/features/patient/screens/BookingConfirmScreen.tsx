@@ -23,7 +23,18 @@ export function BookingConfirmScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
-  const { doctorId, date, time, visitType, purpose, queuePosition, fee } = route.params;
+  const {
+    doctorId,
+    date,
+    time,
+    visitType,
+    purpose,
+    queuePosition,
+    fee,
+    patientName,
+    patientEmail,
+    patientPhone,
+  } = route.params;
   const doctor = getDoctorById(doctorId);
 
   return (
@@ -43,6 +54,9 @@ export function BookingConfirmScreen() {
           {purpose === 'first' ? t('patient.slotPurposeFirst') : t('patient.slotPurposeFollowUp')}
         </Text>
         <Text style={styles.line}>{t('patient.slotTimeQueue', { order: queuePosition })}</Text>
+        <Text style={styles.line}>{patientName}</Text>
+        <Text style={styles.line}>{patientEmail}</Text>
+        <Text style={styles.line}>{patientPhone}</Text>
         <Text style={styles.fee}>${fee.toFixed(2)}</Text>
         <Button label={t('common.confirm')} onPress={() => navigation.navigate('Payment')} />
         <Button label={t('common.cancel')} variant="ghost" onPress={() => navigation.goBack()} />

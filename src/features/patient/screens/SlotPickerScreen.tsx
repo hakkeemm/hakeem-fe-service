@@ -14,6 +14,7 @@ import {
   SlotBookTypeSection,
   SlotDayAssignment,
   SlotDayPicker,
+  SlotPatientDetailsSection,
 } from '../components/slotPicker';
 import { useSlotPickerState } from '../hooks/useSlotPickerState';
 import type { PatientStackParamList } from '../navigation/PatientStackNavigator';
@@ -39,9 +40,17 @@ export function SlotPickerScreen() {
     queuePosition,
     fee,
     canBook,
+    patientName,
+    patientEmail,
+    patientPhone,
+    bookingForOther,
     selectDate,
     setVisitType,
     setPurpose,
+    setPatientName,
+    setPatientEmail,
+    setPatientPhone,
+    toggleBookingForOther,
   } = useSlotPickerState(doctorId);
 
   if (!doctor) {
@@ -96,6 +105,17 @@ export function SlotPickerScreen() {
           onSelectPurpose={setPurpose}
         />
 
+        <SlotPatientDetailsSection
+          patientName={patientName}
+          patientEmail={patientEmail}
+          patientPhone={patientPhone}
+          bookingForOther={bookingForOther}
+          onChangeName={setPatientName}
+          onChangeEmail={setPatientEmail}
+          onChangePhone={setPatientPhone}
+          onToggleBookingForOther={toggleBookingForOther}
+        />
+
         {canBook && assignedTime ? (
           <SlotDayAssignment time={assignedTime} order={queuePosition} />
         ) : null}
@@ -107,7 +127,13 @@ export function SlotPickerScreen() {
         fee={fee}
         disabled={!canBook}
         onPress={() => {
-          if (!canBook || !selectedDate || !assignedTime || !visitType || !purpose) {
+          if (
+            !canBook ||
+            !selectedDate ||
+            !assignedTime ||
+            !visitType ||
+            !purpose
+          ) {
             return;
           }
           navigation.navigate('BookingConfirm', {
@@ -118,6 +144,10 @@ export function SlotPickerScreen() {
             purpose,
             queuePosition,
             fee,
+            patientName: patientName.trim(),
+            patientEmail: patientEmail.trim(),
+            patientPhone: patientPhone.trim(),
+            bookingForOther,
           });
         }}
       />

@@ -39,10 +39,14 @@ export type PatientStackParamList = {
     purpose: 'first' | 'followUp';
     queuePosition: number;
     fee: number;
+    patientName: string;
+    patientEmail: string;
+    patientPhone: string;
+    bookingForOther: boolean;
   };
   Payment: undefined;
   BookingSuccess: undefined;
-  AppointmentDetail: undefined;
+  AppointmentDetail: { appointmentId: string };
   RateReview: undefined;
 };
 
@@ -101,7 +105,11 @@ export function PatientStackNavigator() {
       />
       <Stack.Screen name="Payment" component={PaymentScreen} />
       <Stack.Screen name="BookingSuccess" component={BookingSuccessScreen} />
-      <Stack.Screen name="AppointmentDetail" component={AppointmentDetailScreen} />
+      <Stack.Screen
+        name="AppointmentDetail"
+        component={AppointmentDetailScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="RateReview" component={RateReviewScreen} />
     </Stack.Navigator>
   );

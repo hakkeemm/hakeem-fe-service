@@ -1,12 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   FlatList,
-  Keyboard,
-  LayoutAnimation,
-  Platform,
-  Pressable,
   StyleSheet,
-  UIManager,
   View,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -28,13 +23,10 @@ import {
 } from '../components/DoctorScreenHeader';
 import { SpecialistFilterSheet } from '../components/SpecialistFilterSheet';
 import type { SpecialtyId } from '../data/mockCategories';
+import type { CityId } from '../data/mockCities';
 import { getNearbyDoctors, type MockDoctor } from '../data/mockDoctors';
 import type { PatientStackParamList } from '../navigation/PatientStackNavigator';
 import type { PatientTabParamList } from '../navigation/PatientTabNavigator';
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 type DoctorListNavigation = CompositeNavigationProp<
   BottomTabNavigationProp<PatientTabParamList, 'Search'>,
@@ -46,21 +38,27 @@ export function SearchResultsListScreen() {
   const navigation = useNavigation<DoctorListNavigation>();
   const [filterVisible, setFilterVisible] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState<SpecialtyId | null>(null);
+  const [selectedCity, setSelectedCity] = useState<CityId | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [headerHeights, setHeaderHeights] = useState<DoctorHeaderHeights>({
-    max: 160,
-    min: 110,
+    max: 200,
+    min: 150,
     collapseDistance: 50,
   });
 
-  const hasActiveFilter = selectedSpecialty !== null || searchQuery.trim().length > 0;
+  const hasActiveFilter =
+    selectedSpecialty !== null ||
+    selectedCity !== null ||
+    searchQuery.trim().length > 0;
 
   const doctors = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return getNearbyDoctors().filter((doctor) => {
       if (selectedSpecialty && doctor.specialtyId !== selectedSpecialty) {
+        return false;
+      }
+      if (selectedCity && doctor.cityId !== selectedCity) {
         return false;
       }
       if (!query) {
@@ -72,26 +70,16 @@ export function SearchResultsListScreen() {
         doctor.hospital.toLowerCase().includes(query)
       );
     });
-  }, [searchQuery, selectedSpecialty]);
-
-  const closeSearch = useCallback(() => {
-    if (!isSearchExpanded) {
-      return;
-    }
-    Keyboard.dismiss();
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsSearchExpanded(false);
-  }, [isSearchExpanded]);
+  }, [searchQuery, selectedCity, selectedSpecialty]);
 
   const handleDoctorPress = (doctor: MockDoctor) => {
-    closeSearch();
     navigation.navigate('DoctorProfile', { doctorId: doctor.id });
   };
 
   const clearFilters = () => {
     setSelectedSpecialty(null);
+    setSelectedCity(null);
     setSearchQuery('');
-    closeSearch();
   };
 
   const handleHeightsChange = useCallback((heights: DoctorHeaderHeights) => {
@@ -109,7 +97,6 @@ export function SearchResultsListScreen() {
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
         onScroll={handleScroll}
-        onScrollBeginDrag={closeSearch}
         scrollEventThrottle={16}
         contentContainerStyle={[
           styles.list,
@@ -137,15 +124,6 @@ export function SearchResultsListScreen() {
         ListFooterComponent={doctors.length > 0 ? <View style={styles.footerSpace} /> : null}
       />
 
-      {isSearchExpanded ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('common.cancel')}
-          onPress={closeSearch}
-          style={[styles.outsideDismiss, { top: headerHeights.min }]}
-        />
-      ) : null}
-
       <DoctorScreenHeader
         title={t('patient.allDoctors')}
         encouragementTitle={t('patient.healthEntryTitle')}
@@ -158,17 +136,17 @@ export function SearchResultsListScreen() {
         searchPlaceholder={t('patient.searchDoctors')}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
-        isSearchExpanded={isSearchExpanded}
-        onSearchExpandedChange={setIsSearchExpanded}
         onBackPress={() => navigation.navigate('Home')}
         onFilterPress={() => setFilterVisible(true)}
       />
 
       <SpecialistFilterSheet
         visible={filterVisible}
-        selectedId={selectedSpecialty}
+        selectedSpecialtyId={selectedSpecialty}
+        selectedCityId={selectedCity}
         onClose={() => setFilterVisible(false)}
-        onSelect={setSelectedSpecialty}
+        onSelectSpecialty={setSelectedSpecialty}
+        onSelectCity={setSelectedCity}
       />
     </SafeAreaView>
   );
@@ -190,9 +168,5 @@ const styles = StyleSheet.create({
   },
   footerSpace: {
     height: spacing.xxl + 48,
-  },
-  outsideDismiss: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1,
   },
 });

@@ -38,7 +38,9 @@ export const SearchBar = React.forwardRef<TextInput, SearchBarProps>(function Se
 
   const content = (
     <>
-      <HeaderSearchIcon color={colors.textPlaceholder} size={20} />
+      <View style={styles.iconWrap}>
+        <HeaderSearchIcon color={colors.textPlaceholder} size={20} />
+      </View>
       <TextInput
         ref={ref}
         {...inputProps}
@@ -84,12 +86,15 @@ const styles = StyleSheet.create({
     backgroundColor: homeHeaderColors.surface,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingStart: spacing.md,
+    paddingStart: spacing.lg,
     paddingEnd: spacing.xs,
     gap: spacing.sm,
   },
   containerRtl: {
     flexDirection: 'row-reverse',
+  },
+  iconWrap: {
+    paddingEnd: spacing.xs,
   },
   pressed: {
     opacity: 0.92,
