@@ -23,7 +23,7 @@ export type PatientStackParamList = {
   SearchResultsMap: undefined;
   Filter: undefined;
   Notifications: undefined;
-  DoctorProfile: undefined;
+  DoctorProfile: { doctorId: string };
   SlotPicker: undefined;
   BookingConfirm: undefined;
   Payment: undefined;
@@ -55,7 +55,11 @@ export function PatientStackNavigator() {
         component={FindYourDoctorScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
+      <Stack.Screen
+        name="DoctorProfile"
+        component={DoctorProfileScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="SlotPicker" component={SlotPickerScreen} />
       <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />

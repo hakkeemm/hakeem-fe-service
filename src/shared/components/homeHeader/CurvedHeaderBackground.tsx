@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../theme/colors';
 import { spacing } from '../../theme/spacing';
 
-const CURVE_DEPTH = 28;
+export const CURVE_DEPTH = 28;
 
 export interface CurvedHeaderBackgroundProps {
   children: React.ReactNode;

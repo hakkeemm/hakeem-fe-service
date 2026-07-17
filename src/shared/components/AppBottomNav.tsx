@@ -74,8 +74,9 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
   const midpoint = Math.ceil(orderedRoutes.length / 2);
   const leftRoutes = orderedRoutes.slice(0, midpoint);
   const rightRoutes = orderedRoutes.slice(midpoint);
-  const visualLeft = isRTL ? rightRoutes : leftRoutes;
-  const visualRight = isRTL ? leftRoutes : rightRoutes;
+  // Mirror tab order for RTL so Home stays at the start edge (far right).
+  const visualLeft = isRTL ? [...rightRoutes].reverse() : leftRoutes;
+  const visualRight = isRTL ? [...leftRoutes].reverse() : rightRoutes;
 
   const renderTab = (route: (typeof state.routes)[number]) => {
     const routeIndex = state.routes.findIndex((item) => item.key === route.key);
@@ -112,7 +113,7 @@ export function AppBottomNav({ state, descriptors, navigation, items, centerActi
         accessibilityLabel={label}
         onPress={onPress}
         onLongPress={onLongPress}
-        style={styles.tab}
+        style={[styles.tab, isRTL && route.name === 'Profile' && styles.profileTabRtl]}
       >
         <BottomNavIcon name={icon} color={color} active={isFocused} />
         <Text style={[styles.label, { color }]} numberOfLines={1}>
@@ -190,6 +191,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     minHeight: 48,
+  },
+  profileTabRtl: {
+    paddingLeft: spacing.sm,
   },
   label: {
     ...typography.caption,

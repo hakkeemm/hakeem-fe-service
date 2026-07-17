@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FlatList, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -8,10 +8,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { EmptyState } from '../../../shared/components/EmptyState';
-import { homeHeaderColors } from '../../../shared/components/homeHeader';
+import { colors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { DoctorCard } from '../components/DoctorCard';
-import { DoctorScreenHeader } from '../components/DoctorScreenHeader';
+import {
+  DoctorScreenHeader,
+  type DoctorHeaderHeights,
+} from '../components/DoctorScreenHeader';
 import { SpecialistFilterSheet } from '../components/SpecialistFilterSheet';
 import type { SpecialtyId } from '../data/mockCategories';
 import { getNearbyDoctors, type MockDoctor } from '../data/mockDoctors';
@@ -30,6 +33,12 @@ export function SearchResultsListScreen() {
   const [selectedSpecialty, setSelectedSpecialty] = useState<SpecialtyId | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const [headerHeights, setHeaderHeights] = useState<DoctorHeaderHeights>({
+    max: 160,
+    min: 110,
+    collapseDistance: 50,
+  });
 
   const hasActiveFilter = selectedSpecialty !== null || searchQuery.trim().length > 0;
 
@@ -50,8 +59,8 @@ export function SearchResultsListScreen() {
     });
   }, [searchQuery, selectedSpecialty]);
 
-  const handleDoctorPress = (_doctor: MockDoctor) => {
-    navigation.navigate('DoctorProfile');
+  const handleDoctorPress = (doctor: MockDoctor) => {
+    navigation.navigate('DoctorProfile', { doctorId: doctor.id });
   };
 
   const clearFilters = () => {
@@ -60,10 +69,22 @@ export function SearchResultsListScreen() {
     setIsSearchExpanded(false);
   };
 
+  const handleHeightsChange = useCallback((heights: DoctorHeaderHeights) => {
+    setHeaderHeights(heights);
+  }, []);
+
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setScrollOffset(event.nativeEvent.contentOffset.y);
+  }, []);
+
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <DoctorScreenHeader
-        title={t('patient.doctor')}
+        title={t('patient.allDoctors')}
+        encouragementTitle={t('patient.healthEntryTitle')}
+        encouragementMessage={t('patient.healthEntryMessage')}
+        scrollOffset={scrollOffset}
+        onHeightsChange={handleHeightsChange}
         backAccessibilityLabel={t('common.back')}
         filterAccessibilityLabel={t('common.filter')}
         searchAccessibilityLabel={t('patient.search')}
@@ -80,7 +101,13 @@ export function SearchResultsListScreen() {
         data={doctors}
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={[styles.list, doctors.length === 0 && styles.listEmpty]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={[
+          styles.list,
+          { paddingTop: headerHeights.max + spacing.sm },
+          doctors.length === 0 && styles.listEmpty,
+        ]}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <DoctorCard
@@ -115,11 +142,10 @@ export function SearchResultsListScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: homeHeaderColors.background,
+    backgroundColor: colors.background,
   },
   list: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
   },
   listEmpty: {
     flexGrow: 1,

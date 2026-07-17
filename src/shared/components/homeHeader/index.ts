@@ -1,4 +1,4 @@
-export { CurvedHeaderBackground } from './CurvedHeaderBackground';
+export { CurvedHeaderBackground, CURVE_DEPTH } from './CurvedHeaderBackground';
 export type { CurvedHeaderBackgroundProps } from './CurvedHeaderBackground';
 export { UserGreeting } from './UserGreeting';
 export type { UserGreetingProps } from './UserGreeting';

@@ -167,8 +167,8 @@ export function HomeScreen() {
 
           <PopularDoctorsSection
             onSeeAllPress={() => navigation.navigate('Search')}
-            onDoctorPress={() => navigation.navigate('DoctorProfile')}
-            onBookPress={() => navigation.navigate('DoctorProfile')}
+            onDoctorPress={(doctor) => navigation.navigate('DoctorProfile', { doctorId: doctor.id })}
+            onBookPress={(doctor) => navigation.navigate('DoctorProfile', { doctorId: doctor.id })}
           />
         </View>
       </ScrollView>
